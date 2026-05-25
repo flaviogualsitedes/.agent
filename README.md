@@ -1,6 +1,6 @@
-# 🤖 Agent Framework Híbrido
+# 🤖 Automatize Agent
 
-O **Agent Framework Híbrido** é uma estrutura ultra-organizada para agentes de IA locais (copilotos de codificação). Ele foi projetado especialmente para desenvolvedores que necessitam de consistência arquitetural, memória persistente a longo prazo e guias modulares passo a passo para execução de tarefas complexas.
+O **Automatize Agent** é uma estrutura ultra-organizada para agentes de IA locais (copilotos de codificação). Ele foi projetado especialmente para desenvolvedores que necessitam de consistência arquitetural, memória persistente a longo prazo e guias modulares passo a passo para execução de tarefas complexas.
 
 Este projeto resolve os problemas de **perda de contexto** e **código incompleto**, oferecendo uma divisão inteligente de responsabilidades (Orquestrador + Subagentes) e integração nativa com o **Obsidian** ou armazenamento local Git.
 
@@ -22,19 +22,19 @@ git clone https://github.com/flaviogualsitedes/.agent.git .agent
 
 ---
 
-### ⚙️ Passo 2: Executar o Setup Inicial de Memória
-Com a pasta criada, abra o chat do seu editor ou assistente de IA preferido neste projeto e envie o comando abaixo para iniciar o fluxo guiado:
+### ⚙️ Passo 2: Executar o Setup e Painel de Controle
+Com a pasta criada, abra o chat do seu editor ou assistente de IA preferido neste projeto e envie o comando abaixo para iniciar o menu de opções interativo:
 
 ```text
-/automatize-agente-setup
+/automatize-agent
 ```
 
-**O agente inteligente irá:**
-1. **Verificar se já existe configuração:** Se você já rodou o setup antes, ele exibirá os dados salvos e perguntará se deseja mantê-los ou alterá-los, economizando seu tempo.
-2. **Deseja usar Memória Local ou Obsidian?**
-   * **Modo Local:** Cria uma base de histórico no próprio projeto (`.agent/project/memory/`). Recomendado para projetos simples ou repositórios independentes.
-   * **Modo Obsidian:** Permite centralizar a inteligência e cruzar aprendizados entre múltiplos projetos através de um cofre (Vault) no Obsidian.
-3. **Criação do Cofre (Se Obsidian):** O agente solicitará o caminho do seu cofre no Obsidian (ex: `E:\Obsidian\MeuVault`) e o nome deste projeto. Se você aprovar, ele criará as pastas estruturais de histórico automaticamente no seu Obsidian.
+**Opções disponíveis no painel de controle `/automatize-agent`:**
+1. **Configurar Sistema (`setup`):** Configura a memória local ou Obsidian.
+2. **Redefinir Configurações (`reset`):** Limpa o arquivo de configurações retornando ao padrão.
+3. **Sincronizar Histórico (`sync`):** Migra notas de memória, regras locais e módulos do Git para o Obsidian.
+4. **Atualizar Inteligência (`update`):** Atualiza os subagentes e regras de Clean Code preservando seus dados de projeto.
+5. **Desinstalar Framework (`remove`):** Apaga com segurança a pasta `.agent/` de forma recursiva.
 
 ---
 
@@ -53,7 +53,9 @@ Caso escolha utilizar o Obsidian, você pode habilitar a comunicação em tempo 
        "token": "SEU_BEARER_TOKEN_AQUI"
    }
    ```
-5. Com isso ativo, o agente poderá consumir ferramentas MCP e integrar-se de forma dinâmica com o seu cofre.
+5. Com isso ativo, o agente criará as notas de histórico e módulos dentro da subpasta dedicada ao projeto sob:
+   `Obsidian Vault/01_Projects/[nome-do-seu-projeto]/`
+6. Isso garante que múltiplos projetos tenham pastas isoladas no seu cofre do Obsidian, permitindo a você gerenciar o RAG de cada sistema separadamente.
 
 ---
 
@@ -74,13 +76,12 @@ Para colocar o agente para codificar uma funcionalidade complexa seguindo um pla
 
 ---
 
-## 🔄 Comandos Rápidos do Framework
+## 🔮 Visão de Futuro: A CLI `@automatize/agent`
 
-*   **`/automatize-agente-setup`**: Inicia ou reconfigura as pastas e a integração de memória do agente no projeto atual (com detecção de configurações salvas).
-*   **`/automatize-agente-reset`**: Redefine o arquivo `config.json` limpando caminhos e tokens de integração (retorna para o padrão original de fábrica).
-*   **`/automatize-agente-sync`**: Sincroniza e migra todo o histórico de memórias, regras locais e módulos criados localmente (Modo Git) para o Obsidian quando você decidir ativá-lo no meio do processo.
-*   **`/automatize-agente-update`**: Atualiza a inteligência dos subagentes e regras globais a partir do GitHub oficial, mantendo as configurações de projeto e a memória locais totalmente intactas.
-*   **`/automatize-agente-remove`**: Remove completamente toda a pasta `.agent` e seus arquivos deste repositório local com segurança (solicita confirmação).
+Estamos trabalhando na construção de uma interface de linha de comando (CLI) distribuída globalmente. A experiência será simplificada para:
+
+*   **Instalação global única:** `npm install -g @automatize/agent`
+*   **Inicializar projeto local:** `automatize-agent init` (criará apenas as configurações locais e pastas de contexto, consumindo a inteligência dos subagentes globalmente).
 
 ---
 

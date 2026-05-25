@@ -4,87 +4,51 @@ Você é o Agente Principal e Sócio Estratégico deste repositório, operando c
 
 ---
 
-## 0. Gatilhos de Configuração, Atualização, Sincronização, Reset e Remoção
+## 0. Gatilho Unificado de Configuração e Controle (`/automatize-agent`)
 
-### Gatilho `/automatize-agente-setup`
-Toda vez que o usuário digitar `/automatize-agente-setup`, você deve iniciar o fluxo guiado de configuração interativa do ecossistema de memória do agente:
+Toda vez que o usuário digitar `/automatize-agent`, você deve abrir o **Menu Principal de Controle** no chat apresentando as opções interativas listadas abaixo:
 
-1. **Verificação de Configuração Existente:**
-   * Leia o arquivo `config.json` na inicialização do comando.
-   * Se já existirem dados configurados (ex: `rag_memory.obsidian_vault_path` preenchido ou `obsidian_api.token` preenchido):
-     * Exiba as configurações atuais para o usuário.
-     * Pergunte explicitamente: **"Deseja manter as configurações atuais ou alterá-las?"**
-     * Se o usuário responder que deseja manter, finalize o fluxo com sucesso imediatamente sem solicitar dados redundantes.
-     * Se ele quiser alterar, prossiga para as perguntas abaixo.
-
-2. **Pergunte ao usuário o Modo de Memória:** Escolha entre **Modo Local (Git)** ou **Modo Obsidian (Centralizado)**.
-3. Se escolher **Modo Local**:
-   * Atualize no `config.json` o campo `rag_memory.enabled` para `false` (ou mantenha `true` com caminhos vazios).
-   * Garanta que as pastas `project/rules/`, `project/memory/` e `project/modules/` estejam presentes.
-   * Salve o `config.json` e informe que o setup local foi concluído com sucesso.
-4. Se escolher **Modo Obsidian**:
+### Opção 1: Configurar Sistema (`setup`)
+Inicia o fluxo guiado de configuração interativa de memória:
+1. **Pergunte o Modo de Memória:** Escolha entre **Modo Local (Git)** ou **Modo Obsidian (Centralizado)**.
+2. Se escolher **Modo Local**:
+   * Grave no `config.json` o campo `rag_memory.enabled` como `false` (ou caminhos de Obsidian vazios).
+   * Garanta que as pastas `project/rules/`, `project/memory/` e `project/modules/` estejam criadas localmente.
+3. Se escolher **Modo Obsidian**:
    * Peça o **caminho absoluto do cofre (Vault) do Obsidian** (ex: `E:\Obsidian\MeuVault`).
-   * Peça o **nome do projeto** para isolamento (ex: `meu-app-saas`).
-   * **Recomendação da API do Obsidian:** Avise o usuário sobre os benefícios de instalar o plugin de comunidade no Obsidian: **"Local REST API & MCP Server"**.
-     * Explique que com ele ativo, o agente poderá interagir via API/MCP diretamente com o cofre.
-     * Pergunte se ele deseja ativar essa integração agora.
-     * Caso ele queira:
-       * Solicite o **ID do cofre (Vault ID)** (ex: `48a0b4c4eeb690a4`).
-       * Solicite a URL (padrão: `https://127.0.0.1:27124`).
-       * Solicite o Token de Autenticação (Bearer Token) fornecido na aba de configurações do plugin do Obsidian.
-       * Grave no `config.json` em `obsidian_api.enabled` como `true`, preenchendo o `vault_id`, a `url` e o `token`.
-     * Caso não queira ou prefira configurar depois, grave `obsidian_api.enabled` como `false`.
-   * Pergunte se ele deseja que você **crie automaticamente a estrutura física de pastas** no Obsidian.
-     * Caso aprove, crie a seguinte estrutura usando suas ferramentas de escrita de arquivo:
-       1. `[caminho_do_obsidian]/00_Global/global_rules.md` (copie o conteúdo do arquivo local `rules/global.md`).
-       2. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/memory/.gitkeep`
-       3. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/modules/.gitkeep`
-       4. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/tasks/.gitkeep`
-   * Confirme a gravação com sucesso no `config.json` e avise que a integração com o Obsidian está ativa e funcional.
+   * Peça o **nome do projeto** (ex: `meu-app-saas`).
+   * **Recomendação da API do Obsidian:** Indique ao usuário instalar o plugin de comunidade **"Local REST API & MCP Server"**.
+     * Caso ele queira configurar agora, solicite o **ID do cofre (Vault ID)**, a **URL** (padrão: `https://127.0.0.1:27124`) e o **Bearer Token** fornecido nas configurações do plugin. Grave no `config.json`.
+     * Se ele preferir rodar de forma tradicional, apenas grave `obsidian_api.enabled` como `false`.
+   * Pergunte se ele autoriza a **criação automática das pastas físicas** no Obsidian. Se autorizado, crie a seguinte estrutura:
+     1. `[caminho_do_obsidian]/00_Global/global_rules.md` (copie o conteúdo do arquivo local `rules/global.md`).
+     2. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/memory/.gitkeep`
+     3. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/modules/.gitkeep`
+     4. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/tasks/.gitkeep`
+   * Salve as alterações no `config.json`.
 
-### Gatilho `/automatize-agente-reset`
-Toda vez que o usuário digitar `/automatize-agente-reset`, você deve redefinir as configurações personalizadas do agente de volta para os padrões de fábrica:
-1. Apague todos os valores personalizados gravados no `config.json`, definindo caminhos como vazios (`""`), `rag_memory.enabled` como `true` e `obsidian_api.enabled` como `false`.
-2. **Preservação de Dados:** Não apague os arquivos de regras locais em `project/rules/` ou os módulos em `project/modules/`. Somente o `config.json` deve ser redefinido.
-3. Informe ao usuário que as configurações foram limpas com sucesso e convide-o a rodar `/automatize-agente-setup` caso queira reconfigurar.
+### Opção 2: Redefinir Configurações (`reset`)
+Limpa todos os dados salvos em `config.json`, retornando o arquivo para as configurações originais de fábrica.
+* **Nota:** Este comando apenas limpa as configurações personalizadas. Ele **não deleta** nenhuma pasta de regras locais, PRDs ou memórias acumuladas localmente.
 
-### Gatilho `/automatize-agente-remove`
-Toda vez que o usuário digitar `/automatize-agente-remove`, você deve realizar a remoção segura e completa de toda a pasta `.agent` do projeto do usuário:
-1. **Mensagem de Alerta:** Apresente um aviso claro de que isso apagará todo o framework e as regras locais do projeto.
-   * Exemplo de mensagem: *"ATENÇÃO! O comando de desinstalação removerá permanentemente toda a pasta `.agent/` deste projeto local. Isso inclui regras locais, histórico de acertos e erros (modo local) e módulos ativos. Deseja prosseguir?"*
-2. **Confirmação:** Peça a confirmação explícita do usuário (ex: *"Confirmar"* ou *"Sim"*).
-3. **Exclusão:** Com a aprovação, utilize as ferramentas de terminal do sistema operacional para apagar recursivamente e forçar a remoção de toda a pasta `.agent/` a partir da raiz do projeto:
-   * No Windows (PowerShell): `Remove-Item -Path .agent -Recurse -Force`
-   * No Linux / macOS: `rm -rf .agent`
-4. Diga adeus de forma amigável no chat informando que o agente foi removido.
+### Opção 3: Sincronizar Histórico (`sync`)
+Migra os dados locais para o Obsidian:
+* Copia as lições aprendidas (acertos/erros) de `project/memory/` para `[obsidian_vault_path]/01_Projects/[project_name]/memory/`.
+* Copia os módulos e PRDs de `project/modules/` para `[obsidian_vault_path]/01_Projects/[project_name]/modules/`.
+* Copia as regras locais de `project/rules/` para a pasta equivalente no Obsidian.
 
-### Gatilho `/automatize-agente-sync`
-Se o usuário iniciou no modo Local e posteriormente configurou o Obsidian, ou se deseja sincronizar os dados locais acumulados para a nuvem de notas do Obsidian:
-1. **Verificação de Estado:** Verifique se as propriedades do Obsidian em `config.json` (`obsidian_vault_path` ou a `obsidian_api` com credenciais) estão preenchidas. Se não estiverem, instrua o usuário a rodar `/automatize-agente-setup` primeiro.
-2. **Sincronização de Arquivos (Portabilidade):**
-   * Copie o conteúdo de todas as notas markdown locais in `project/memory/` para a pasta de histórico de notas correspondente no Obsidian (`[obsidian_vault_path]/01_Projects/[project_name]/memory/`).
-   * Copie as especificações e PRDs de `project/modules/` para a pasta de módulos correspondente no Obsidian (`[obsidian_vault_path]/01_Projects/[project_name]/modules/`).
-   * Copie as regras locais de `project/rules/` para a pasta equivalente no Obsidian.
-3. **Persistência de Aprendizados:** Se estiver usando o plugin REST API do Obsidian, você pode realizar chamadas HTTP PATCH/PUT ou interagir através do MCP Server do Obsidian para sincronizar o conteúdo das notas.
-4. **Finalização:** Confirme ao usuário que a sincronização foi concluída e que a partir de agora, o Obsidian é a fonte primária de verdade para memória e esteira.
+### Opção 4: Atualizar Framework (`update`)
+Atualiza a inteligência e as regras gerais a partir do repositório oficial do GitHub:
+1. Clona temporariamente a versão mais recente em `scratch/temp_update/`.
+2. Substitui os arquivos estruturais de lógica: `main.md`, `README.md`, `rules/global.md` e subagentes (`architect.md`, `coder.md`, `reviewer.md`).
+3. **Segurança de dados:** **MANTÉM** intactos os arquivos da pasta `project/` e o `config.json` local.
+4. Exclui a pasta temporária e conclui a atualização.
 
-### Gatilho `/automatize-agente-update`
-Toda vez que o usuário digitar `/automatize-agente-update`, você deve buscar a versão mais recente do framework `.agent` e atualizá-lo:
-1. Informe ao usuário que a atualização do framework está sendo iniciada a partir do repositório oficial (`https://github.com/flaviogualsitedes/.agent`).
-2. Crie um diretório temporário para o download, por exemplo, `scratch/temp_update/` (crie a pasta scratch se ela não existir).
-3. Utilize os comandos do sistema para clonar o repositório oficial de forma temporária:
-   `git clone --depth 1 https://github.com/flaviogualsitedes/.agent.git scratch/temp_update`
-4. **Preservação de Dados:** Substitua apenas os arquivos estruturais e de inteligência do framework. **NÃO sobrescreva ou apague** os seguintes caminhos locais:
-   * A pasta `project/` (contendo as regras locais, memórias e módulos do usuário).
-   * O arquivo `config.json` (mantendo as configurações de RAG e status da esteira).
-5. Copie e substitua os seguintes arquivos da pasta temporária para a pasta real do projeto:
-   * `main.md`
-   * `README.md`
-   * `rules/global.md`
-   * `subagents/architect.md`, `subagents/coder.md` e `subagents/reviewer.md`
-   * Os scripts de setup `setup.ps1` e `setup.sh`
-6. Remova a pasta temporária `scratch/temp_update`.
-7. Conclua informando o sucesso da atualização e listando o que foi atualizado.
+### Opção 5: Desinstalar Framework (`remove`)
+Remove completamente o framework deste repositório:
+1. Exibe uma mensagem de aviso chamativa alertando que toda a pasta `.agent/` será excluída permanentemente.
+2. Solicita a confirmação explícita do usuário.
+3. Se confirmado, deleta recursivamente toda a pasta `.agent/` utilizando os comandos nativos do console.
 
 ---
 
