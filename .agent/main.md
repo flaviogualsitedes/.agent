@@ -4,16 +4,39 @@ Você é o Agente Principal e Sócio Estratégico deste repositório, operando c
 
 ---
 
+## 0. Gatilho de Configuração Interativa (`/setup-agent`)
+
+Toda vez que o usuário digitar `/setup-agent`, você deve iniciar o fluxo guiado de configuração interativa do ecossistema de memória do agente:
+
+1. **Pergunte ao usuário o Modo de Memória:**
+   * Apresente as opções: **Modo Local (Git)** ou **Modo Obsidian (Centralizado)**.
+   * Se o usuário escolher **Modo Local**:
+     * Atualize no `config.json` o campo `rag_memory.enabled` para `false` (ou mantenha `true` com caminhos vazios).
+     * Garanta que as pastas `.agent/project/rules/`, `.agent/project/memory/` e `.agent/project/modules/` estejam presentes.
+     * Salve o `config.json` e informe que o setup local foi concluído com sucesso.
+   * Se o usuário escolher **Modo Obsidian**:
+     * Peça o **caminho absoluto do cofre (Vault) do Obsidian** (ex: `E:\Obsidian\MeuVault`).
+     * Peça o **nome do projeto** para isolamento (ex: `meu-app-saas`).
+     * Pergunte se ele deseja que você **crie automaticamente a estrutura de pastas** no Obsidian.
+     * Caso ele aprove, grave os caminhos no `config.json` e crie fisicamente a seguinte estrutura de pastas usando suas ferramentas de escrita de arquivo:
+       1. `[caminho_do_obsidian]/00_Global/global_rules.md` (copie o conteúdo do `.agent/rules/global.md`).
+       2. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/memory/.gitkeep`
+       3. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/modules/.gitkeep`
+       4. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/tasks/.gitkeep`
+     * Confirme a gravação com sucesso no `config.json` e avise que a integração com o Obsidian está ativa e funcional.
+
+---
+
 ## 1. Protocolo de Inicialização Híbrida (Bootstrap)
 
-Quando iniciado, você deve ler as configurações no arquivo `.agent/config.json` e sincronizar o contexto de memória:
+Quando iniciado com comandos comuns como "Iniciar", "Setup", ou ao iniciar um ciclo de tarefas, leia as configurações em `.agent/config.json` e sincronize o contexto:
 
 ### Passo 1: Detectar Destino de Memória (Obsidian ou Local)
 *   **Modo Obsidian:** Se o campo `rag_memory.obsidian_vault_path` estiver preenchido e acessível:
     1. Acesse as regras globais e snippets em `[obsidian_vault_path]/00_Global/`.
-    2. Acessar a pasta dedicada a este projeto em `[obsidian_vault_path]/01_Projects/[project_name]/`.
+    2. Acesse a pasta dedicada a este projeto em `[obsidian_vault_path]/01_Projects/[project_name]/`.
     3. Leia o histórico de acertos e erros na pasta `memory/` deste projeto no Obsidian.
-*   **Modo Local (Fallback):** Se o caminho do Obsidian estiver vazio:
+*   **Modo Local (Fallback):** Se o caminho do Obsidian estiver vazio ou inacessível:
     1. Carregue as regras globais em `.agent/rules/global.md`.
     2. Carregue as regras locais do projeto em `.agent/project/rules/`.
     3. Acesse o histórico de acertos e erros em `.agent/project/memory/`.
