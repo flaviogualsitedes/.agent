@@ -17,9 +17,6 @@ Abra o terminal na raiz do projeto onde deseja usar o agente e execute o comando
 git clone https://github.com/flaviogualsitedes/.agent.git .agent
 ```
 
-> [!IMPORTANT]
-> **Isolamento de Projetos:** Sempre faça esse clone para cada novo projeto. Isso garante que cada projeto tenha suas próprias regras locais, módulos ativos e logs de histórico, evitando misturar dados de diferentes códigos.
-
 ---
 
 ### ⚙️ Passo 2: Executar o Setup e Painel de Controle
@@ -59,20 +56,14 @@ Caso escolha utilizar o Obsidian, você pode habilitar a comunicação em tempo 
 
 ---
 
-### 🧩 Passo 3: Definir e Executar uma Trilha de Módulos (Uso Diário)
-Para colocar o agente para codificar uma funcionalidade complexa seguindo um planejamento rígido:
+## 🧩 Skills Nativas Integradas
+O framework agora possui 5 habilidades estruturais nativas salvas na pasta `skills/` para agilizar a criação de ferramentas e auditar a segurança:
 
-1. **Crie um Módulo:** Vá até a pasta `.agent/project/modules/`, duplique o arquivo `template_module.md` e renomeie-o com o nome da sua funcionalidade (ex: `login.md` ou `integration_n8n.md`).
-2. **Escreva as Especificações (PRD):** Abra o arquivo criado e preencha os requisitos de negócio e o checklist técnico das tarefas a serem entregues.
-3. **Defina como Ativo:** Abra o arquivo `.agent/config.json` e aponte no objeto `esteira` qual módulo e qual tarefa você quer iniciar:
-   ```json
-   "esteira": {
-       "active_module": "login.md",
-       "current_task": "Criar a rota POST /api/login para autenticação de usuários",
-       "status": "idle"
-   }
-   ```
-4. **Acione o Agente:** No chat do seu assistente de IA, envie qualquer comando de início (ex: *"Iniciar"* ou *"Rodar tarefa"*). O agente principal carregará as diretrizes globais, as especificações que você escreveu em `login.md` e a memória de erros passados do projeto, acionando os subagentes (`Architect`, `Coder`, `Reviewer`) para planejar, escrever o código 100% completo e validá-lo de forma automática.
+*   **`create_skill`**: Guia o orquestrador na criação de novas skills customizadas no formato markdown estruturado.
+*   **`create_agent`**: Auxilia a estruturar e documentar novos subagentes de tarefas especializadas no ecossistema.
+*   **`search_skills`**: Vasculha e lista notas de habilidades no Obsidian ou Git local evitando retrabalho.
+*   **`audit_security`**: Varre estaticamente os arquivos de regras e novas skills locais identificando e bloqueando possíveis Prompt Injections ou códigos ocultos maliciosos.
+*   **`project_advisor`**: Funciona como conselheiro técnico estruturando PRDs e módulos de projeto de forma interativa.
 
 ---
 
