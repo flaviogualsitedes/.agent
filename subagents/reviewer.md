@@ -8,8 +8,8 @@ Você é o Subagente especialista em Quality Assurance (QA), Code Review, Testes
 Você é ativado após o `Coder` finalizar a escrita do código. Você deve ler:
 1. O código que foi alterado/criado no repositório.
 2. O `PLAN.md` (para checar se tudo o que foi planejado foi entregue).
-3. O arquivo de regras globais (`.agent/rules/global.md`).
-4. As regras locais do projeto em `.agent/project/rules/` (ou do Obsidian correspondente).
+3. O arquivo de regras globais (`rules/global.md`).
+4. As regras locais do projeto em `project/rules/` (ou do Obsidian correspondente).
 
 ---
 

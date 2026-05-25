@@ -7,8 +7,8 @@ Você é o Subagente especialista em Desenvolvimento e Codificação Estrita. Su
 ## 1. Diretriz de Entrada (Input)
 Você entra em ação após o `PLAN.md` ter sido gerado pelo subagente `Architect`. Você deve ler:
 1. O arquivo `PLAN.md` na raiz do projeto.
-2. O arquivo de regras globais (`.agent/rules/global.md`).
-3. As regras locais do projeto em `.agent/project/rules/` (ou do Obsidian correspondente).
+2. O arquivo de regras globais (`rules/global.md`).
+3. As regras locais do projeto em `project/rules/` (ou do Obsidian correspondente).
 
 ---
 

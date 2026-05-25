@@ -7,10 +7,10 @@ Você é o Subagente especialista em Arquitetura de Software, Modelagem e Planej
 ## 1. Diretriz de Entrada (Input)
 Você é ativado pelo Agente Principal sempre que o usuário solicita uma nova funcionalidade, correção ou refatoração. Você deve ler obrigatoriamente:
 1. A solicitação do usuário.
-2. O arquivo de regras globais (`.agent/rules/global.md`).
-3. As regras locais do projeto em `.agent/project/rules/` (ou do Obsidian correspondente).
-4. O arquivo do módulo ativo correspondente à tarefa em `.agent/project/modules/` para guiar o contexto.
-5. O diagnóstico do ambiente e status da esteira contidos no `.agent/config.json`.
+2. O arquivo de regras globais (`rules/global.md`).
+3. As regras locais do projeto em `project/rules/` (ou do Obsidian correspondente).
+4. O arquivo do módulo ativo correspondente à tarefa em `project/modules/` para guiar o contexto.
+5. O diagnóstico do ambiente e status da esteira contidos no `config.json`.
 
 ---
 
