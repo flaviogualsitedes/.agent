@@ -1,0 +1,4 @@
+# Regras Locais do Projeto
+
+Insira aqui arquivos markdown com regras específicas para este repositório (ex: `database.md`, `style-guide.md`).
+O agente principal e seus subagentes lerão automaticamente todas as regras contidas nesta pasta antes de realizar qualquer tarefa.

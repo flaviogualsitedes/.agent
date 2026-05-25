@@ -1,0 +1,7 @@
+# Histórico e Memória Local do Projeto
+
+Esta pasta serve como armazenamento local para o histórico do projeto (acertos, erros e descobertas técnicas) caso você opte por não usar a integração com o Obsidian.
+
+## Como funciona:
+* A cada execução bem-sucedida de tarefa, o orquestrador principal salvará aprendizados relevantes aqui.
+* Na inicialização, estes arquivos são injetados no contexto para evitar repetição de erros passados.

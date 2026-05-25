@@ -1,0 +1,39 @@
+{
+    "agent_version": "1.2.0",
+    "project_name": "meu-projeto-exemplo",
+    "current_phase": "BOOTSTRAP",
+    "max_iterations_per_task": 3,
+    "rag_memory": {
+        "enabled": true,
+        "obsidian_vault_path": "",
+        "project_subfolder": ""
+    },
+    "project_lifecycle": {
+        "1_bootstrap": {
+            "status": "pending",
+            "description": "Mapear o projeto, carregar regras locais e conectar à memória (Obsidian ou Local)."
+        },
+        "2_spec": {
+            "status": "pending",
+            "description": "Mapear os módulos ativos e desenhar o plano arquitetural (PLAN.md)."
+        },
+        "3_execution": {
+            "status": "pending",
+            "description": "Escrever código e executar as esteiras planejadas."
+        },
+        "4_review": {
+            "status": "pending",
+            "description": "Auditoria de qualidade, testes e salvamento de novos aprendizados na memória."
+        }
+    },
+    "esteira": {
+        "active_module": "",
+        "current_task": "",
+        "status": "idle"
+    },
+    "detected_environment": {
+        "language": "unknown",
+        "framework": "unknown",
+        "package_manager": "unknown"
+    }
+}
