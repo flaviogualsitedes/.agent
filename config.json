@@ -1,5 +1,5 @@
 {
-    "agent_version": "1.2.0",
+    "agent_version": "1.3.0",
     "project_name": "meu-projeto-exemplo",
     "current_phase": "BOOTSTRAP",
     "max_iterations_per_task": 3,
@@ -7,6 +7,11 @@
         "enabled": true,
         "obsidian_vault_path": "",
         "project_subfolder": ""
+    },
+    "obsidian_api": {
+        "enabled": false,
+        "url": "https://127.0.0.1:27124",
+        "token": ""
     },
     "project_lifecycle": {
         "1_bootstrap": {

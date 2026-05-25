@@ -16,16 +16,24 @@ Toda vez que o usuário digitar `/setup-agent`, você deve iniciar o fluxo guiad
 3. Se escolher **Modo Obsidian**:
    * Peça o **caminho absoluto do cofre (Vault) do Obsidian** (ex: `E:\Obsidian\MeuVault`).
    * Peça o **nome do projeto** para isolamento (ex: `meu-app-saas`).
-   * Pergunte se ele deseja que você **crie automaticamente a estrutura de pastas** no Obsidian.
-   * Caso aprove, grave os caminhos no `config.json` e crie a seguinte estrutura usando suas ferramentas de escrita de arquivo:
-     1. `[caminho_do_obsidian]/00_Global/global_rules.md` (copie o conteúdo do arquivo local `rules/global.md`).
-     2. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/memory/.gitkeep`
-     3. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/modules/.gitkeep`
-     4. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/tasks/.gitkeep`
+   * **Recomendação da API do Obsidian:** Avise o usuário sobre os benefícios de instalar o plugin de comunidade no Obsidian: **"Local REST API & MCP Server"**.
+     * Explique que com ele ativo, o agente poderá interagir via API/MCP diretamente com o cofre.
+     * Pergunte se ele deseja ativar essa integração agora.
+     * Caso ele queira:
+       * Solicite a URL (padrão: `https://127.0.0.1:27124`).
+       * Solicite o Token de Autenticação (Bearer Token) fornecido na aba de configurações do plugin do Obsidian.
+       * Grave no `config.json` em `obsidian_api.enabled` como `true`, preenchendo a `url` e o `token`.
+     * Caso não queira ou prefira configurar depois, grave `obsidian_api.enabled` como `false`.
+   * Pergunte se ele deseja que você **crie automaticamente a estrutura física de pastas** no Obsidian.
+     * Caso aprove, crie a seguinte estrutura usando suas ferramentas de escrita de arquivo:
+       1. `[caminho_do_obsidian]/00_Global/global_rules.md` (copie o conteúdo do arquivo local `rules/global.md`).
+       2. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/memory/.gitkeep`
+       3. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/modules/.gitkeep`
+       4. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/tasks/.gitkeep`
    * Confirme a gravação com sucesso no `config.json` e avise que a integração com o Obsidian está ativa e funcional.
 
 ### Gatilho `/update-agent`
-Toda vez que o usuário digitar `/update-agent`, você deve buscar a versão mais recente do framework `.agent` (que está localizado na pasta `.agent/` do usuário final) e atualizá-lo:
+Toda vez que o usuário digitar `/update-agent`, você deve buscar a versão mais recente do framework `.agent` e atualizá-lo:
 1. Informe ao usuário que a atualização do framework está sendo iniciada a partir do repositório oficial (`https://github.com/flaviogualsitedes/.agent`).
 2. Crie um diretório temporário para o download, por exemplo, `scratch/temp_update/` (crie a pasta scratch se ela não existir).
 3. Utilize os comandos do sistema para clonar o repositório oficial de forma temporária:

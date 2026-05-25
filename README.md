@@ -37,6 +37,24 @@ Com a pasta criada, abra o chat do seu editor ou assistente de IA preferido nest
 
 ---
 
+### 🔌 Integração Avançada: Obsidian Local REST API & MCP
+Caso escolha utilizar o Obsidian, você pode habilitar a comunicação em tempo real via API / protocolo MCP para que o agente leia e salve informações de forma integrada:
+
+1. No Obsidian, vá em **Configurações > Plugins de Comunidade** e instale o plugin: **"Local REST API & MCP Server"**.
+2. Ative o plugin.
+3. Nas configurações do plugin, copie o **Bearer Token** gerado.
+4. No arquivo `.agent/config.json`, configure a integração:
+   ```json
+   "obsidian_api": {
+       "enabled": true,
+       "url": "https://127.0.0.1:27124",
+       "token": "SEU_BEARER_TOKEN_AQUI"
+   }
+   ```
+5. Com isso ativo, o agente poderá consumir ferramentas MCP e integrar-se de forma dinâmica com o seu cofre.
+
+---
+
 ### 🧩 Passo 3: Definir e Executar uma Trilha de Módulos (Uso Diário)
 Para colocar o agente para codificar uma funcionalidade complexa seguindo um planejamento rígido:
 
