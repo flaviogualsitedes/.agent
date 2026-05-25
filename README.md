@@ -1,73 +1,65 @@
 # 🤖 Agent Framework Híbrido
 
-O **Agent Framework Híbrido** é uma estrutura ultra-organizada para agentes de IA locais. Ele foi projetado especialmente para desenvolvedores que necessitam de consistência arquitetural, memória persistente a longo prazo e guias modulares passo a passo para execução de tarefas complexas.
+O **Agent Framework Híbrido** é uma estrutura ultra-organizada para agentes de IA locais (copilotos de codificação). Ele foi projetado especialmente para desenvolvedores que necessitam de consistência arquitetural, memória persistente a longo prazo e guias modulares passo a passo para execução de tarefas complexas.
 
 Este projeto resolve os problemas de **perda de contexto** e **código incompleto**, oferecendo uma divisão inteligente de responsabilidades (Orquestrador + Subagentes) e integração nativa com o **Obsidian** ou armazenamento local Git.
 
 ---
 
-## 🛠️ Instalação no seu Projeto
+## 🛠️ Guia Passo a Passo: Do Zero ao Início do Desenvolvimento
 
-Para integrar este framework ao seu repositório de desenvolvimento, basta clonar este repositório diretamente em uma pasta chamada `.agent` na raiz do seu projeto:
+Como este framework foi feito para se adaptar e aprender com o contexto específico de cada repositório, você deve realizar esta configuração básica para **cada projeto individual** onde deseja a ajuda do agente.
+
+### 📋 Passo 1: Clonar o Framework no seu Projeto
+Abra o terminal na raiz do projeto onde deseja usar o agente e execute o comando abaixo. Ele criará a pasta `.agent` isolando a inteligência para este escopo:
 
 ```bash
 git clone https://github.com/flaviogualsitedes/.agent.git .agent
 ```
 
-Ao fazer isso, a sua pasta `.agent` terá a seguinte estrutura:
+> [!IMPORTANT]
+> **Isolamento de Projetos:** Sempre faça esse clone para cada novo projeto. Isso garante que cada projeto tenha suas próprias regras locais, módulos ativos e logs de histórico, evitando misturar dados de diferentes códigos.
+
+---
+
+### ⚙️ Passo 2: Executar o Setup Inicial de Memória
+Com a pasta criada, abra o chat do seu editor ou assistente de IA preferido neste projeto e envie o comando abaixo para iniciar o fluxo guiado:
 
 ```text
-.agent/
-├── config.json                 # Configurações de ambiente, fases e caminhos de memória
-├── main.md                     # Agente Principal (Orquestrador e Ciclo de Execução)
-├── README.md                   # Este arquivo de documentação
-├── rules/
-│   └── global.md               # Diretrizes globais de desenvolvimento (ex: Clean Code, SOLID)
-├── subagents/
-│   ├── architect.md            # Subagente Architect (Gera o plano técnico)
-│   ├── coder.md                # Subagente Coder (Implementa código 100% completo)
-│   └── reviewer.md             # Subagente Reviewer (Qualidade, testes e validação)
-└── project/                    # Contexto específico deste repositório (Não é sobrescrito no update)
-    ├── rules/                  # Regras Locais (ex: regras específicas deste banco de dados)
-    ├── specs/                  # Especificações técnicas e PRDs gerais do projeto
-    ├── memory/                 # Histórico local de acertos/erros (usado sem Obsidian)
-    └── modules/                # Trilhas de módulos (ex: login.md, integration.md)
+/setup-agent
 ```
 
+**O agente perguntará no chat:**
+1. **Deseja usar Memória Local ou Obsidian?**
+   * **Modo Local:** Cria uma base de histórico no próprio projeto (`.agent/project/memory/`). Recomendado para projetos simples ou repositórios independentes.
+   * **Modo Obsidian:** Permite centralizar a inteligência e cruzar aprendizados entre múltiplos projetos através de um cofre (Vault) no Obsidian.
+2. **Criação do Cofre (Se Obsidian):** O agente solicitará o caminho do seu cofre no Obsidian (ex: `E:\Obsidian\MeuVault`) e o nome deste projeto. Se você aprovar, ele criará as pastas estruturais de histórico automaticamente no seu Obsidian.
+
 ---
 
-## 💾 Gestão Híbrida de Memória (RAG)
+### 🧩 Passo 3: Definir e Executar uma Trilha de Módulos (Uso Diário)
+Para colocar o agente para codificar uma funcionalidade complexa seguindo um planejamento rígido:
 
-O agente pode operar em duas modalidades de memória:
-
-### 1. Modo Obsidian (Recomendado)
-Mantém uma pasta centralizada fora do seu projeto para cruzar aprendizados entre diferentes repositórios:
-1. No seu Obsidian, crie a seguinte estrutura:
-   ```text
-   Obsidian Vault/
-   ├── 00_Global/                       # Regras globais e snippets reutilizáveis
-   └── 01_Projects/                     # Projetos isolados
-       └── [Nome-Do-Projeto]/           # Nome definido no config.json do repositório
-           ├── memory/                  # Histórico de acertos e erros
-           ├── modules/                 # Módulos e tarefas ativos
-           └── tasks/                   # Logs de execuções
+1. **Crie um Módulo:** Vá até a pasta `.agent/project/modules/`, duplique o arquivo `template_module.md` e renomeie-o com o nome da sua funcionalidade (ex: `login.md` ou `integration_n8n.md`).
+2. **Escreva as Especificações (PRD):** Abra o arquivo criado e preencha os requisitos de negócio e o checklist técnico das tarefas a serem entregues.
+3. **Defina como Ativo:** Abra o arquivo `.agent/config.json` e aponte no objeto `esteira` qual módulo e qual tarefa você quer iniciar:
+   ```json
+   "esteira": {
+       "active_module": "login.md",
+       "current_task": "Criar a rota POST /api/login para autenticação de usuários",
+       "status": "idle"
+   }
    ```
-2. No seu projeto local, edite o `.agent/config.json` definindo o caminho absoluto do seu cofre em `rag_memory.obsidian_vault_path` e ative o `enabled: true`.
-
-### 2. Modo Local (Fallback Git)
-Se o caminho do Obsidian estiver vazio, o agente usará automaticamente a pasta `project/` local interna do framework. O histórico de acertos e erros persistirá diretamente no repositório do seu projeto.
+4. **Acione o Agente:** No chat do seu assistente de IA, envie qualquer comando de início (ex: *"Iniciar"* ou *"Rodar tarefa"*). O agente principal carregará as diretrizes globais, as especificações que você escreveu em `login.md` e a memória de erros passados do projeto, acionando os subagentes (`Architect`, `Coder`, `Reviewer`) para planejar, escrever o código 100% completo e validá-lo de forma automática.
 
 ---
 
-## 🔄 Ciclo de Execução Contínuo e Comandos
+## 🔄 Comandos Rápidos do Framework
 
-### Gatilho `/setup-agent`
-Configure e crie a estrutura de pastas inicial no Obsidian ou local interativamente através do chat de inteligência enviando: `/setup-agent`.
-
-### Gatilho `/update-agent`
-Atualize a inteligência e os subagentes sem perder nenhuma configuração de projeto ou histórico com o comando: `/update-agent`.
+*   **`/setup-agent`**: Inicia ou reconfigura as pastas e a integração de memória do agente no projeto atual.
+*   **`/update-agent`**: Atualiza a inteligência dos subagentes e regras globais a partir do GitHub oficial, mantendo as configurações de projeto e a memória locais totalmente intactas.
 
 ---
 
 ## 📝 Licença
-Distribuído sob a licença MIT. Veja o repositório principal no GitHub do autor para mais informações.
+Distribuído sob a licença MIT. Veja o repositório principal no GitHub para mais informações.
