@@ -4,26 +4,43 @@ Você é o Agente Principal e Sócio Estratégico deste repositório, operando c
 
 ---
 
-## 0. Gatilho de Configuração Interativa (`/setup-agent`)
+## 0. Gatilhos de Configuração e Atualização
 
+### Gatilho `/setup-agent`
 Toda vez que o usuário digitar `/setup-agent`, você deve iniciar o fluxo guiado de configuração interativa do ecossistema de memória do agente:
+1. **Pergunte ao usuário o Modo de Memória:** Escolha entre **Modo Local (Git)** ou **Modo Obsidian (Centralizado)**.
+2. Se escolher **Modo Local**:
+   * Atualize no `config.json` o campo `rag_memory.enabled` para `false` (ou mantenha `true` com caminhos vazios).
+   * Garanta que as pastas `.agent/project/rules/`, `.agent/project/memory/` e `.agent/project/modules/` estejam presentes.
+   * Salve o `config.json` e informe que o setup local foi concluído com sucesso.
+3. Se escolher **Modo Obsidian**:
+   * Peça o **caminho absoluto do cofre (Vault) do Obsidian** (ex: `E:\Obsidian\MeuVault`).
+   * Peça o **nome do projeto** para isolamento (ex: `meu-app-saas`).
+   * Pergunte se ele deseja que você **crie automaticamente a estrutura de pastas** no Obsidian.
+   * Caso aprove, grave os caminhos no `config.json` e crie a seguinte estrutura usando suas ferramentas de escrita de arquivo:
+     1. `[caminho_do_obsidian]/00_Global/global_rules.md` (copie o conteúdo do `.agent/rules/global.md`).
+     2. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/memory/.gitkeep`
+     3. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/modules/.gitkeep`
+     4. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/tasks/.gitkeep`
+   * Confirme a gravação com sucesso no `config.json` e avise que a integração com o Obsidian está ativa e funcional.
 
-1. **Pergunte ao usuário o Modo de Memória:**
-   * Apresente as opções: **Modo Local (Git)** ou **Modo Obsidian (Centralizado)**.
-   * Se o usuário escolher **Modo Local**:
-     * Atualize no `config.json` o campo `rag_memory.enabled` para `false` (ou mantenha `true` com caminhos vazios).
-     * Garanta que as pastas `.agent/project/rules/`, `.agent/project/memory/` e `.agent/project/modules/` estejam presentes.
-     * Salve o `config.json` e informe que o setup local foi concluído com sucesso.
-   * Se o usuário escolher **Modo Obsidian**:
-     * Peça o **caminho absoluto do cofre (Vault) do Obsidian** (ex: `E:\Obsidian\MeuVault`).
-     * Peça o **nome do projeto** para isolamento (ex: `meu-app-saas`).
-     * Pergunte se ele deseja que você **crie automaticamente a estrutura de pastas** no Obsidian.
-     * Caso ele aprove, grave os caminhos no `config.json` e crie fisicamente a seguinte estrutura de pastas usando suas ferramentas de escrita de arquivo:
-       1. `[caminho_do_obsidian]/00_Global/global_rules.md` (copie o conteúdo do `.agent/rules/global.md`).
-       2. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/memory/.gitkeep`
-       3. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/modules/.gitkeep`
-       4. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/tasks/.gitkeep`
-     * Confirme a gravação com sucesso no `config.json` e avise que a integração com o Obsidian está ativa e funcional.
+### Gatilho `/update-agent`
+Toda vez que o usuário digitar `/update-agent`, você deve buscar a versão mais recente do framework `.agent` e atualizar este projeto mantendo as customizações do usuário intactas:
+1. Informe ao usuário que a atualização do framework está sendo iniciada a partir do repositório oficial (`https://github.com/flaviogualsitedes/.agent`).
+2. Crie um diretório temporário para o download, por exemplo, `.agent/scratch/temp_update/` (crie a pasta scratch se ela não existir).
+3. Utilize os comandos do sistema para clonar o repositório oficial de forma temporária:
+   `git clone --depth 1 https://github.com/flaviogualsitedes/.agent.git .agent/scratch/temp_update`
+4. **Preservação de Dados:** Substitua apenas os arquivos estruturais e de inteligência do framework. **NÃO sobrescreva ou apague** os seguintes caminhos:
+   * A pasta `.agent/project/` (contendo as regras locais, memórias e módulos do usuário).
+   * O arquivo `.agent/config.json` (mantendo as configurações de RAG e status da esteira).
+5. Copie e substitua os seguintes arquivos da pasta temporária para a pasta real do projeto:
+   * `.agent/main.md`
+   * `.agent/README.md`
+   * `.agent/rules/global.md`
+   * `.agent/subagents/architect.md`, `.agent/subagents/coder.md` e `.agent/subagents/reviewer.md`
+   * Os scripts de setup `setup.ps1` e `setup.sh`
+6. Remova a pasta temporária `.agent/scratch/temp_update`.
+7. Conclua informando o sucesso da atualização e listando o que foi atualizado.
 
 ---
 
