@@ -26,7 +26,7 @@ git clone https://github.com/flaviogualsitedes/.agent.git .agent
 Com a pasta criada, abra o chat do seu editor ou assistente de IA preferido neste projeto e envie o comando abaixo para iniciar o fluxo guiado:
 
 ```text
-/setup-agent
+/automatize-agente-setup
 ```
 
 **O agente inteligente irá:**
@@ -41,7 +41,7 @@ Com a pasta criada, abra o chat do seu editor ou assistente de IA preferido nest
 ### 🔌 Integração Avançada: Obsidian Local REST API & MCP
 Caso escolha utilizar o Obsidian, você pode habilitar a comunicação em tempo real via API / protocolo MCP para que o agente leia e salve informações de forma integrada:
 
-1. No Obsidian, vá em **Configurações > Plugins de Comunidade** e instale o plugin: **"Local REST API & MCP Server"**.
+1. No Obsidian, vai em **Configurações > Plugins de Comunidade** e instale o plugin: **"Local REST API & MCP Server"**.
 2. Ative o plugin.
 3. Nas configurações do plugin, copie o **Bearer Token** e o **Vault ID** gerados.
 4. No arquivo `.agent/config.json`, configure a integração:
@@ -70,16 +70,16 @@ Para colocar o agente para codificar uma funcionalidade complexa seguindo um pla
        "status": "idle"
    }
    ```
-4. **Acione o Agente:** No chat do seu assistente de IA, envie qualquer comando de início (ex: *"Iniciar"* ou *"Rodar tarefa"*). O agente principal carregará as diretrizes globais, as especificações que você escreveu in `login.md` e a memória de erros passados do projeto, acionando os subagentes (`Architect`, `Coder`, `Reviewer`) para planejar, escrever o código 100% completo e validá-lo de forma automática.
+4. **Acione o Agente:** No chat do seu assistente de IA, envie qualquer comando de início (ex: *"Iniciar"* ou *"Rodar tarefa"*). O agente principal carregará as diretrizes globais, as especificações que você escreveu em `login.md` e a memória de erros passados do projeto, acionando os subagentes (`Architect`, `Coder`, `Reviewer`) para planejar, escrever o código 100% completo e validá-lo de forma automática.
 
 ---
 
 ## 🔄 Comandos Rápidos do Framework
 
-*   **`/setup-agent`**: Inicia ou reconfigura as pastas e a integração de memória do agente no projeto atual (com detecção de configurações salvas).
-*   **`/reset-agent`**: Redefine o arquivo `config.json` limpando caminhos e tokens de integração (retorna para o padrão original de fábrica).
-*   **`/sync-agent`**: Sincroniza e migra todo o histórico de memórias, regras locais e módulos criados localmente (Modo Git) para o Obsidian quando você decidir ativá-lo no meio do processo.
-*   **`/update-agent`**: Atualiza a inteligência dos subagentes e regras globais a partir do GitHub oficial, mantendo as configurações de projeto e a memória locais totalmente intactas.
+*   **`/automatize-agente-setup`**: Inicia ou reconfigura as pastas e a integração de memória do agente no projeto atual (com detecção de configurações salvas).
+*   **`/automatize-agente-reset`**: Redefine o arquivo `config.json` limpando caminhos e tokens de integração (retorna para o padrão original de fábrica).
+*   **`/automatize-agente-sync`**: Sincroniza e migra todo o histórico de memórias, regras locais e módulos criados localmente (Modo Git) para o Obsidian quando você decidir ativá-lo no meio do processo.
+*   **`/automatize-agente-update`**: Atualiza a inteligência dos subagentes e regras globais a partir do GitHub oficial, mantendo as configurações de projeto e a memória locais totalmente intactas.
 
 ---
 
