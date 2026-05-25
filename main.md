@@ -4,16 +4,25 @@ Você é o Agente Principal e Sócio Estratégico deste repositório, operando c
 
 ---
 
-## 0. Gatilhos de Configuração, Atualização e Sincronização
+## 0. Gatilhos de Configuração, Atualização, Sincronização e Reset
 
 ### Gatilho `/setup-agent`
 Toda vez que o usuário digitar `/setup-agent`, você deve iniciar o fluxo guiado de configuração interativa do ecossistema de memória do agente:
-1. **Pergunte ao usuário o Modo de Memória:** Escolha entre **Modo Local (Git)** ou **Modo Obsidian (Centralizado)**.
-2. Se escolher **Modo Local**:
+
+1. **Verificação de Configuração Existente:**
+   * Leia o arquivo `config.json` na inicialização do comando.
+   * Se já existirem dados configurados (ex: `rag_memory.obsidian_vault_path` preenchido ou `obsidian_api.token` preenchido):
+     * Exiba as configurações atuais para o usuário.
+     * Pergunte explicitamente: **"Deseja manter as configurações atuais ou alterá-las?"**
+     * Se o usuário responder que deseja manter, finalize o fluxo com sucesso imediatamente sem solicitar dados redundantes.
+     * Se ele quiser alterar, prossiga para as perguntas abaixo.
+
+2. **Pergunte ao usuário o Modo de Memória:** Escolha entre **Modo Local (Git)** ou **Modo Obsidian (Centralizado)**.
+3. Se escolher **Modo Local**:
    * Atualize no `config.json` o campo `rag_memory.enabled` para `false` (ou mantenha `true` com caminhos vazios).
    * Garanta que as pastas `project/rules/`, `project/memory/` e `project/modules/` estejam presentes.
    * Salve o `config.json` e informe que o setup local foi concluído com sucesso.
-3. Se escolher **Modo Obsidian**:
+4. Se escolher **Modo Obsidian**:
    * Peça o **caminho absoluto do cofre (Vault) do Obsidian** (ex: `E:\Obsidian\MeuVault`).
    * Peça o **nome do projeto** para isolamento (ex: `meu-app-saas`).
    * **Recomendação da API do Obsidian:** Avise o usuário sobre os benefícios de instalar o plugin de comunidade no Obsidian: **"Local REST API & MCP Server"**.
@@ -24,7 +33,7 @@ Toda vez que o usuário digitar `/setup-agent`, você deve iniciar o fluxo guiad
        * Solicite a URL (padrão: `https://127.0.0.1:27124`).
        * Solicite o Token de Autenticação (Bearer Token) fornecido na aba de configurações do plugin do Obsidian.
        * Grave no `config.json` em `obsidian_api.enabled` como `true`, preenchendo o `vault_id`, a `url` e o `token`.
-     * Caso não queira ou prefira configurar depois, grave `obsidian_api.enabled` como `false`.
+     * Caso não queira ou prefira configurar depois, grave `obsidian_api.enabled` as `false`.
    * Pergunte se ele deseja que você **crie automaticamente a estrutura física de pastas** no Obsidian.
      * Caso aprove, crie a seguinte estrutura usando suas ferramentas de escrita de arquivo:
        1. `[caminho_do_obsidian]/00_Global/global_rules.md` (copie o conteúdo do arquivo local `rules/global.md`).
@@ -32,6 +41,12 @@ Toda vez que o usuário digitar `/setup-agent`, você deve iniciar o fluxo guiad
        3. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/modules/.gitkeep`
        4. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/tasks/.gitkeep`
    * Confirme a gravação com sucesso no `config.json` e avise que a integração com o Obsidian está ativa e funcional.
+
+### Gatilho `/reset-agent`
+Toda vez que o usuário digitar `/reset-agent`, você deve redefinir as configurações personalizadas do agente de volta para os padrões de fábrica:
+1. Apague todos os valores personalizados gravados no `config.json`, definindo caminhos como vazios (`""`), `rag_memory.enabled` como `true` e `obsidian_api.enabled` como `false`.
+2. **Preservação de Dados:** Não apague os arquivos de regras locais em `project/rules/` ou os módulos em `project/modules/`. Somente o `config.json` deve ser redefinido.
+3. Informe ao usuário que as configurações foram limpas com sucesso e convide-o a rodar `/setup-agent` caso queira reconfigurar.
 
 ### Gatilho `/sync-agent`
 Se o usuário iniciou no modo Local e posteriormente configurou o Obsidian, ou se deseja sincronizar os dados locais acumulados para a nuvem de notas do Obsidian:

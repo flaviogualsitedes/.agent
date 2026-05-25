@@ -29,11 +29,12 @@ Com a pasta criada, abra o chat do seu editor ou assistente de IA preferido nest
 /setup-agent
 ```
 
-**O agente perguntará no chat:**
-1. **Deseja usar Memória Local ou Obsidian?**
+**O agente inteligente irá:**
+1. **Verificar se já existe configuração:** Se você já rodou o setup antes, ele exibirá os dados salvos e perguntará se deseja mantê-los ou alterá-los, economizando seu tempo.
+2. **Deseja usar Memória Local ou Obsidian?**
    * **Modo Local:** Cria uma base de histórico no próprio projeto (`.agent/project/memory/`). Recomendado para projetos simples ou repositórios independentes.
    * **Modo Obsidian:** Permite centralizar a inteligência e cruzar aprendizados entre múltiplos projetos através de um cofre (Vault) no Obsidian.
-2. **Criação do Cofre (Se Obsidian):** O agente solicitará o caminho do seu cofre no Obsidian (ex: `E:\Obsidian\MeuVault`) e o nome deste projeto. Se você aprovar, ele criará as pastas estruturais de histórico automaticamente no seu Obsidian.
+3. **Criação do Cofre (Se Obsidian):** O agente solicitará o caminho do seu cofre no Obsidian (ex: `E:\Obsidian\MeuVault`) e o nome deste projeto. Se você aprovar, ele criará as pastas estruturais de histórico automaticamente no seu Obsidian.
 
 ---
 
@@ -69,13 +70,14 @@ Para colocar o agente para codificar uma funcionalidade complexa seguindo um pla
        "status": "idle"
    }
    ```
-4. **Acione o Agente:** No chat do seu assistente de IA, envie qualquer comando de início (ex: *"Iniciar"* ou *"Rodar tarefa"*). O agente principal carregará as diretrizes globais, as especificações que você escreveu em `login.md` e a memória de erros passados do projeto, acionando os subagentes (`Architect`, `Coder`, `Reviewer`) para planejar, escrever o código 100% completo e validá-lo de forma automática.
+4. **Acione o Agente:** No chat do seu assistente de IA, envie qualquer comando de início (ex: *"Iniciar"* ou *"Rodar tarefa"*). O agente principal carregará as diretrizes globais, as especificações que você escreveu in `login.md` e a memória de erros passados do projeto, acionando os subagentes (`Architect`, `Coder`, `Reviewer`) para planejar, escrever o código 100% completo e validá-lo de forma automática.
 
 ---
 
 ## 🔄 Comandos Rápidos do Framework
 
-*   **`/setup-agent`**: Inicia ou reconfigura as pastas e a integração de memória do agente no projeto atual.
+*   **`/setup-agent`**: Inicia ou reconfigura as pastas e a integração de memória do agente no projeto atual (com detecção de configurações salvas).
+*   **`/reset-agent`**: Redefine o arquivo `config.json` limpando caminhos e tokens de integração (retorna para o padrão original de fábrica).
 *   **`/sync-agent`**: Sincroniza e migra todo o histórico de memórias, regras locais e módulos criados localmente (Modo Git) para o Obsidian quando você decidir ativá-lo no meio do processo.
 *   **`/update-agent`**: Atualiza a inteligência dos subagentes e regras globais a partir do GitHub oficial, mantendo as configurações de projeto e a memória locais totalmente intactas.
 
