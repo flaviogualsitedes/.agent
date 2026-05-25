@@ -57,13 +57,14 @@ Caso escolha utilizar o Obsidian, você pode habilitar a comunicação em tempo 
 ---
 
 ## 🧩 Skills Nativas Integradas
-O framework agora possui 5 habilidades estruturais nativas salvas na pasta `skills/` para agilizar a criação de ferramentas e auditar a segurança:
+O framework possui 6 habilidades estruturais nativas salvas na pasta `skills/` para agilizar a criação de ferramentas e auditar a segurança e consumo:
 
-*   **`create_skill`**: Guia o orquestrador na criação de novas skills customizadas no formato markdown estruturado.
+*   **`create_skill`**: Auxilia a IA a guiar você na criação de novas skills customizadas no formato markdown estruturado.
 *   **`create_agent`**: Auxilia a estruturar e documentar novos subagentes de tarefas especializadas no ecossistema.
-*   **`search_skills`**: Vasculha e lista notas de habilidades no Obsidian ou Git local evitando retrabalho.
-*   **`audit_security`**: Varre estaticamente os arquivos de regras e novas skills locais identificando e bloqueando possíveis Prompt Injections ou códigos ocultos maliciosos.
-*   **`project_advisor`**: Funciona como conselheiro técnico estruturando PRDs e módulos de projeto de forma interativa.
+*   **`search_skills`**: Vasculha e lista notas de habilidades no Obsidian ou Git local.
+*   **`audit_security`**: Varre estaticamente os arquivos de regras locais e novas notas identificando possíveis injeções de prompt ou códigos maliciosos.
+*   **`project_advisor`**: Funciona como assistente técnico gerando PRDs e módulos de projeto interativos.
+*   **`context_audit`**: Realiza diagnóstico e auditoria sobre o consumo de tokens e a eficiência do contexto (regras locais e notas do Obsidian).
 
 ---
 
