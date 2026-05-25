@@ -42,11 +42,12 @@ Caso escolha utilizar o Obsidian, você pode habilitar a comunicação em tempo 
 
 1. No Obsidian, vá em **Configurações > Plugins de Comunidade** e instale o plugin: **"Local REST API & MCP Server"**.
 2. Ative o plugin.
-3. Nas configurações do plugin, copie o **Bearer Token** gerado.
+3. Nas configurações do plugin, copie o **Bearer Token** e o **Vault ID** gerados.
 4. No arquivo `.agent/config.json`, configure a integração:
    ```json
    "obsidian_api": {
        "enabled": true,
+       "vault_id": "SEU_VAULT_ID_AQUI",
        "url": "https://127.0.0.1:27124",
        "token": "SEU_BEARER_TOKEN_AQUI"
    }
@@ -75,6 +76,7 @@ Para colocar o agente para codificar uma funcionalidade complexa seguindo um pla
 ## 🔄 Comandos Rápidos do Framework
 
 *   **`/setup-agent`**: Inicia ou reconfigura as pastas e a integração de memória do agente no projeto atual.
+*   **`/sync-agent`**: Sincroniza e migra todo o histórico de memórias, regras locais e módulos criados localmente (Modo Git) para o Obsidian quando você decidir ativá-lo no meio do processo.
 *   **`/update-agent`**: Atualiza a inteligência dos subagentes e regras globais a partir do GitHub oficial, mantendo as configurações de projeto e a memória locais totalmente intactas.
 
 ---
