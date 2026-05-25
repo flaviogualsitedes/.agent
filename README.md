@@ -76,11 +76,11 @@ Para colocar o agente para codificar uma funcionalidade complexa seguindo um pla
 
 ---
 
-## 🔮 Visão de Futuro: A CLI `@automatize/agent`
+## 🔮 Visão de Futuro: A CLI `automatize-agent`
 
 Estamos trabalhando na construção de uma interface de linha de comando (CLI) distribuída globalmente. A experiência será simplificada para:
 
-*   **Instalação global única:** `npm install -g @automatize/agent`
+*   **Instalação global única:** `npm install -g automatize-agent`
 *   **Inicializar projeto local:** `automatize-agent init` (criará apenas as configurações locais e pastas de contexto, consumindo a inteligência dos subagentes globalmente).
 
 ---

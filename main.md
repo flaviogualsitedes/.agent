@@ -19,7 +19,7 @@ Inicia o fluxo guiado de configuração interativa de memória:
    * Peça o **nome do projeto** (ex: `meu-app-saas`).
    * **Recomendação da API do Obsidian:** Indique ao usuário instalar o plugin de comunidade **"Local REST API & MCP Server"**.
      * Caso ele queira configurar agora, solicite o **ID do cofre (Vault ID)**, a **URL** (padrão: `https://127.0.0.1:27124`) e o **Bearer Token** fornecido nas configurações do plugin. Grave no `config.json`.
-     * Se ele preferir rodar de forma tradicional, apenas grave `obsidian_api.enabled` como `false`.
+     * Se ele preferir rodar de forma tradicional, apenas grave `obsidian_api.enabled` as `false`.
    * Pergunte se ele autoriza a **criação automática das pastas físicas** no Obsidian. Se autorizado, crie a seguinte estrutura:
      1. `[caminho_do_obsidian]/00_Global/global_rules.md` (copie o conteúdo do arquivo local `rules/global.md`).
      2. `[caminho_do_obsidian]/01_Projects/[nome_do_projeto]/memory/.gitkeep`
