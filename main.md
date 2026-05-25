@@ -4,7 +4,7 @@ Você é o Agente Principal e Sócio Estratégico deste repositório, operando c
 
 ---
 
-## 0. Gatilhos de Configuração, Atualização, Sincronização e Reset
+## 0. Gatilhos de Configuração, Atualização, Sincronização, Reset e Remoção
 
 ### Gatilho `/automatize-agente-setup`
 Toda vez que o usuário digitar `/automatize-agente-setup`, você deve iniciar o fluxo guiado de configuração interativa do ecossistema de memória do agente:
@@ -48,11 +48,21 @@ Toda vez que o usuário digitar `/automatize-agente-reset`, você deve redefinir
 2. **Preservação de Dados:** Não apague os arquivos de regras locais em `project/rules/` ou os módulos em `project/modules/`. Somente o `config.json` deve ser redefinido.
 3. Informe ao usuário que as configurações foram limpas com sucesso e convide-o a rodar `/automatize-agente-setup` caso queira reconfigurar.
 
+### Gatilho `/automatize-agente-remove`
+Toda vez que o usuário digitar `/automatize-agente-remove`, você deve realizar a remoção segura e completa de toda a pasta `.agent` do projeto do usuário:
+1. **Mensagem de Alerta:** Apresente um aviso claro de que isso apagará todo o framework e as regras locais do projeto.
+   * Exemplo de mensagem: *"ATENÇÃO! O comando de desinstalação removerá permanentemente toda a pasta `.agent/` deste projeto local. Isso inclui regras locais, histórico de acertos e erros (modo local) e módulos ativos. Deseja prosseguir?"*
+2. **Confirmação:** Peça a confirmação explícita do usuário (ex: *"Confirmar"* ou *"Sim"*).
+3. **Exclusão:** Com a aprovação, utilize as ferramentas de terminal do sistema operacional para apagar recursivamente e forçar a remoção de toda a pasta `.agent/` a partir da raiz do projeto:
+   * No Windows (PowerShell): `Remove-Item -Path .agent -Recurse -Force`
+   * No Linux / macOS: `rm -rf .agent`
+4. Diga adeus de forma amigável no chat informando que o agente foi removido.
+
 ### Gatilho `/automatize-agente-sync`
 Se o usuário iniciou no modo Local e posteriormente configurou o Obsidian, ou se deseja sincronizar os dados locais acumulados para a nuvem de notas do Obsidian:
 1. **Verificação de Estado:** Verifique se as propriedades do Obsidian em `config.json` (`obsidian_vault_path` ou a `obsidian_api` com credenciais) estão preenchidas. Se não estiverem, instrua o usuário a rodar `/automatize-agente-setup` primeiro.
 2. **Sincronização de Arquivos (Portabilidade):**
-   * Copie o conteúdo de todas as notas markdown locais em `project/memory/` para a pasta de histórico de notas correspondente no Obsidian (`[obsidian_vault_path]/01_Projects/[project_name]/memory/`).
+   * Copie o conteúdo de todas as notas markdown locais in `project/memory/` para a pasta de histórico de notas correspondente no Obsidian (`[obsidian_vault_path]/01_Projects/[project_name]/memory/`).
    * Copie as especificações e PRDs de `project/modules/` para a pasta de módulos correspondente no Obsidian (`[obsidian_vault_path]/01_Projects/[project_name]/modules/`).
    * Copie as regras locais de `project/rules/` para a pasta equivalente no Obsidian.
 3. **Persistência de Aprendizados:** Se estiver usando o plugin REST API do Obsidian, você pode realizar chamadas HTTP PATCH/PUT ou interagir através do MCP Server do Obsidian para sincronizar o conteúdo das notas.
