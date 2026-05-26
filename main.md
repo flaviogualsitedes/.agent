@@ -56,23 +56,29 @@ Remove completamente o framework deste repositório:
 
 Quando iniciado com comandos comuns como "Iniciar", "Setup", ou ao iniciar um ciclo de tarefas, leia as configurações em `config.json` e sincronize o contexto:
 
-### Passo 1: Detectar Destino de Memória (Obsidian ou Local)
-*   **Modo Obsidian:** Se o campo `rag_memory.obsidian_vault_path` estiver preenchido e acessível:
-    1. Acesse as regras globais e snippets em `[obsidian_vault_path]/00_Global/`.
-    2. Acesse a pasta dedicada a este projeto em `[obsidian_vault_path]/01_Projects/[project_name]/`.
-    3. Leia o histórico de acertos e erros na pasta `memory/` deste projeto no Obsidian.
+### Passo 1: Auto-Detectar Ambiente
+* Inspecione a raiz do projeto do usuário em busca de arquivos de dependência/configuração (ex: `package.json`, `requirements.txt`, `go.mod`, `pom.xml`, etc.).
+* Preencha e salve dinamicamente em `config.json` os campos de `detected_environment` (`language`, `framework`, `package_manager`).
+
+### Passo 2: Mapear Canal de Memória (Obsidian vs Local)
+*   **Modo Obsidian (Com REST API):** Se `obsidian_api.enabled` for `true`, tente realizar um teste de conexão HTTP GET `/` com o token fornecido.
+    *   *Se conectar com sucesso:* Utilize as chamadas de API do plugin do Obsidian para ler as notas em `00_Global/` e `01_Projects/[project_name]/`. **AVISE o usuário no chat:** `"Conectado à API do Obsidian. Sincronizando notas de regras e memórias bi-direcionalmente em tempo real."`
+    *   *Se falhar (Offline ou Erro):* Exiba um aviso para o usuário informando a indisponibilidade temporária e faça fallback automático para leitura física direta em `obsidian_vault_path`. **AVISE o usuário no chat:** `"⚠️ Falha na API do Obsidian. Utilizando leitura física local direta em seu cofre."`
+*   **Modo Obsidian (Escrita Física):** Se o campo `rag_memory.obsidian_vault_path` estiver preenchido e acessível, leia fisicamente as regras e notas de memória dele. **AVISE o usuário no chat:** `"Lendo notas físicas no cofre do Obsidian em [caminho]."`
 *   **Modo Local (Fallback):** Se o caminho do Obsidian estiver vazio ou inacessível:
     1. Carregue as regras globais em `rules/global.md`.
     2. Carregue as regras locais do projeto em `project/rules/`.
     3. Acesse o histórico de acertos e erros em `project/memory/`.
+    **AVISE o usuário no chat:** `"Modo de memória Local ativo. Todas as notas e tarefas serão armazenadas localmente em .agent/project/."`
 
-### Passo 2: Mapear Módulos e Esteiras de Desenvolvimento
+### Passo 3: Mapear Módulos e Esteiras de Desenvolvimento
 *   Leia os arquivos da pasta `project/modules/` para entender quais módulos estão definidos e qual a trilha de desenvolvimento atual.
+*   **Sincronização Bi-Direcional de Módulos:** Se o modo Obsidian estiver ativo, verifique se existem alterações ou novos módulos criados no cofre remotos. Faça o download/merge deles para `.agent/project/modules/` para manter o projeto local atualizado. **AVISE o usuário caso um módulo tenha sido sincronizado ou atualizado a partir do Obsidian.**
 *   Verifique no `config.json` qual é o `active_module` e a `current_task` da esteira.
 
-### Passo 3: Atualizar Estado
+### Passo 4: Atualizar Estado
 *   Atualize o status da fase `1_bootstrap` para "completed" no `config.json`.
-*   Apresente um resumo conciso do que aprendeu com a memória do projeto e qual módulo/tarefa está ativo para iniciar o trabalho.
+*   Apresente um resumo conciso do ambiente detectado, onde cada fonte de verdade está localizada (Obsidian ou Local), quais lições aprendidas foram carregadas e qual módulo/tarefa está ativo para iniciar o trabalho de forma 100% transparente para o usuário.
 
 ---
 
@@ -81,10 +87,15 @@ Quando iniciado com comandos comuns como "Iniciar", "Setup", ou ao iniciar um ci
 A cada comando ou solicitação do usuário, você deve coordenar os subagentes seguindo este ciclo contínuo:
 
 1.  **Sincronização Inicial:** Ler o estado atual do projeto, regras locais e logs de tarefas anteriores.
+    *   **Carregamento de Habilidades (Recursivo):** Ao buscar e registrar as skills ativas para os subagentes, realize a leitura recursiva de todas as subpastas de categorias dentro de `.agent/skills/`. Identifique arquivos no formato `skills/[categoria]/[nome_da_skill]/SKILL.md` carregando suas respectivas regras e ações de contexto.
+    *   **Padrão de Engenharia Global:** A skill `core/clean_code` deve ser implicitamente carregada e obedecida por padrão por todos os subagentes (especialmente Coder, Designer e Reviewer) em qualquer ciclo de alteração ou auditoria de arquivos do repositório.
 2.  **Planejamento (Architect):** Acionar o subagente `Architect` para criar o plano técnico detalhado no arquivo `PLAN.md` na raiz do projeto do usuário, alinhado com o PRD e as especificações do módulo ativo em `project/modules/`.
 3.  **Execução (Coder):** Acionar o subagente `Coder` para implementar o código 100% completo, sem omissões e respeitando as regras globais e locais.
-4.  **Auditoria (Reviewer):** Acionar o subagente `Reviewer` para validar a entrega por meio de testes ou análise estática de código.
-5.  **Sincronização Final e Aprendizado:**
+4.  **Polimento Visual (Designer):** Se a tarefa envolver criação ou modificação de interfaces visuais (HTML, CSS, React, etc.), acione o subagente `Designer` para auditar e polir a estética conforme as diretrizes do `Impeccable`.
+5.  **Auditoria (Reviewer):** Acionar o subagente `Reviewer` para validar a entrega por meio de testes ou análise estática de código.
+    *   *Se o Reviewer rejeitar:* Redirecione o feedback `.agent/review_feedback.md` para o `Coder` (ou `Designer` se for falha visual) e execute o ciclo de correção.
+    *   *Se o Reviewer aprovar:* Limpe o arquivo `PLAN.md` e siga para a conclusão.
+6.  **Sincronização Final e Aprendizado:**
     *   **Atualizar Tarefas:** Atualizar a trilha de tarefas do módulo correspondente em `project/modules/` marcando os itens concluídos.
     *   **Salvar Aprendizados:** Se houver correções de bugs complexos ou decisões arquiteturais importantes, crie uma nova nota markdown contendo as lições aprendidas e salve na pasta `memory/` (seja no Obsidian ou local em `project/memory/`).
     *   **Atualizar Esteira:** Salvar o status atual da esteira no `config.json`.

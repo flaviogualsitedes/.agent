@@ -1,41 +1,54 @@
 # 🤖 Automatize Agent
 
-O **Automatize Agent** é uma estrutura ultra-organizada para agentes de IA locais (copilotos de codificação). Ele foi projetado especialmente para desenvolvedores que necessitam de consistência arquitetural, memória persistente a longo prazo e guias modulares passo a passo para execução de tarefas complexas.
+O **Automatize Agent** é uma estrutura de squads de IA locais e orquestração de desenvolvimento de alta performance. Ele foi projetado especialmente para desenvolvedores que necessitam de consistência arquitetural, memória persistente a longo prazo e guias modulares passo a passo para execução de tarefas complexas, mitigando a sobrecarga cognitiva e evitando códigos incompletos.
 
-Este projeto resolve os problemas de **perda de contexto** e **código incompleto**, oferecendo uma divisão inteligente de responsabilidades (Orquestrador + Subagentes) e integração nativa com o **Obsidian** ou armazenamento local Git.
-
----
-
-## 🛠️ Guia Passo a Passo: Do Zero ao Início do Desenvolvimento
-
-Como este framework foi feito para se adaptar e aprender com o contexto específico de cada repositório, você deve realizar esta configuração básica para **cada projeto individual** onde deseja a ajuda do agente.
-
-### 📋 Passo 1: Clonar o Framework no seu Projeto
-Abra o terminal na raiz do projeto onde deseja usar o agente e execute o comando abaixo. Ele criará a pasta `.agent` isolando a inteligência para este escopo:
-
-```bash
-git clone https://github.com/flaviogualsitedes/.agent.git .agent
-```
+Este projeto resolve os problemas de **perda de contexto** e **código incompleto**, oferecendo uma divisão inteligente de responsabilidades (Orquestrador + 7 Subagentes especialistas) e integração nativa com o **Obsidian** ou armazenamento local Git.
 
 ---
 
-### ⚙️ Passo 2: Executar o Setup e Painel de Controle
-Com a pasta criada, abra o chat do seu editor ou assistente de IA preferido neste projeto e envie o comando abaixo para iniciar o menu de opções interativo:
+## 🛠️ Guia de Inicialização Híbrida (CLI Global ou Git Clone)
 
-```text
-/automatize-agent
-```
+Você pode instalar o framework globalmente via CLI ou inicializá-lo de forma local pura clonando o repositório diretamente na raiz do seu projeto.
 
-**Opções disponíveis no painel de controle `/automatize-agent`:**
-1. **Configurar Sistema (`setup`):** Configura a memória local ou Obsidian.
-2. **Redefinir Configurações (`reset`):** Limpa o arquivo de configurações retornando ao padrão.
-3. **Sincronizar Histórico (`sync`):** Migra notas de memória, regras locais e módulos do Git para o Obsidian.
-4. **Atualizar Inteligência (`update`):** Atualiza os subagentes e regras de Clean Code preservando seus dados de projeto.
-5. **Desinstalar Framework (`remove`):** Apaga com segurança a pasta `.agent/` de forma recursiva.
+### Opção A: Instalação Local Pura (Git Clone)
+Esta abordagem é ideal se você prefere não instalar dependências de Node globais em sua máquina.
+
+1. No terminal, na raiz do seu projeto de desenvolvimento, execute o clone direcionando para a pasta `.agent`:
+   ```bash
+   git clone https://github.com/flaviogualsitedes/.agent.git .agent
+   ```
+2. Acesse a pasta `.agent/` e rode o script de setup correspondente ao seu sistema operacional:
+   * **No Windows (PowerShell):**
+     ```powershell
+     powershell -ExecutionPolicy Bypass -File .\setup.ps1
+     ```
+   * **No Linux / macOS (Bash):**
+     ```bash
+     chmod +x setup.sh && ./setup.sh
+     ```
+3. O assistente interativo guiará você coletando o **Nome do Projeto**, **Caminho Físico**, a **IDE de preferência** (Cursor, Claude Code, etc.), **Idioma** e **Padrão de CSS/Estilização**, gerando automaticamente a ponte com a IDE e realizando o backup de regras pré-existentes na raiz de forma segura.
 
 ---
 
-### 🔌 Integração Avançada: Obsidian Local REST API & MCP
+### Opção B: Instalação via CLI Global (`automatize-agent`)
+A experiência simplificada usando nosso utilitário compilado de linha de comando:
+
+1. Instale o pacote globalmente:
+   ```bash
+   npm install -g automatize-agent
+   ```
+2. Inicialize o projeto na raiz desejada:
+   ```bash
+   automatize-agent init
+   ```
+3. Gerencie as configurações, tokens do Obsidian e execute diagnósticos através do menu interativo de setas do teclado apenas digitando:
+   ```bash
+   automatize-agent
+   ```
+
+---
+
+## 🔌 Integração Avançada: Obsidian Local REST API & MCP
 Caso escolha utilizar o Obsidian, você pode habilitar a comunicação em tempo real via API / protocolo MCP para que o agente leia e salve informações de forma integrada:
 
 1. No Obsidian, vá em **Configurações > Plugins de Comunidade** e instale o plugin: **"Local REST API & MCP Server"**.
@@ -56,24 +69,15 @@ Caso escolha utilizar o Obsidian, você pode habilitar a comunicação em tempo 
 
 ---
 
-## 🧩 Skills Nativas Integradas
-O framework possui 6 habilidades estruturais nativas salvas na pasta `skills/` para agilizar a criação de ferramentas e auditar a segurança e consumo:
+## 🧩 Organização de Skills em Categorias
+O framework possui habilidades estruturais nativas organizadas de forma modular em subpastas de categorias:
 
-*   **`create_skill`**: Auxilia a IA a guiar você na criação de novas skills customizadas no formato markdown estruturado.
-*   **`create_agent`**: Auxilia a estruturar e documentar novos subagentes de tarefas especializadas no ecossistema.
-*   **`search_skills`**: Vasculha e lista notas de habilidades no Obsidian ou Git local.
-*   **`audit_security`**: Varre estaticamente os arquivos de regras locais e novas notas identificando possíveis injeções de prompt ou códigos maliciosos.
-*   **`project_advisor`**: Funciona como assistente técnico gerando PRDs e módulos de projeto interativos.
-*   **`context_audit`**: Realiza diagnóstico e auditoria sobre o consumo de tokens e a eficiência do contexto (regras locais e notas do Obsidian).
-
----
-
-## 🔮 Visão de Futuro: A CLI `automatize-agent`
-
-Estamos trabalhando na construção de uma interface de linha de comando (CLI) distribuída globalmente. A experiência será simplificada para:
-
-*   **Instalação global única:** `npm install -g automatize-agent`
-*   **Inicializar projeto local:** `automatize-agent init` (criará apenas as configurações locais e pastas de contexto, consumindo a inteligência dos subagentes globalmente).
+*   **`core/create_skill`**: Auxilia a IA a guiar você na criação de novas skills customizadas no formato markdown estruturado.
+*   **`core/create_agent`**: Auxilia a estruturar e documentar novos subagentes de tarefas especializadas no ecossistema.
+*   **`core/search_skills`**: Vasculha de forma recursiva e lista notas de habilidades.
+*   **`core/audit_security`**: Varre recursivamente os arquivos de regras locais e novas notas identificando possíveis injeções de prompt ou códigos maliciosos.
+*   **`core/clean_code`**: Regra transversal de boas práticas de engenharia, PSR/PEP e internacionalização de documentações.
+*   **`design/impeccable`**: Diretrizes de design e UX (regras de cores OKLCH, contrastes acessíveis e ritmos espaciais).
 
 ---
 

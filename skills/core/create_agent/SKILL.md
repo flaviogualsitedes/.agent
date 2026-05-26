@@ -19,8 +19,9 @@ Esta skill deve ser executada quando o usuário manifestar a intenção de:
 Pergunte ao usuário de forma estruturada:
 1. **Perfil Exclusivo:** Qual a missão e foco principal deste subagente?
 2. **Contexto de Entrada:** O que ele deve ler para iniciar sua tarefa (arquivos, diretórios, variáveis)?
-3. **Ferramentas e Skills:** Quais ferramentas ou skills (nativas ou locais) ele terá permissão para utilizar?
-4. **Entregável Esperado:** Qual o output final ou artefato esperado (código, relatório, correção)?
+3. **Ferramentas e Skills:** Quais ferramentas ou skills (nativas ou locais organizadas por categoria) ele terá permissão para utilizar?
+   * *Nota estrutural:* Mapeie as skills utilizando o formato `[categoria]/[nome_da_skill]` (ex: `development/create_skill`).
+4. **Entregável Esperado:** Qual o output final ou artefato esperado (código, relatório, infra)?
 
 ### Passo 2: Estrutura Rigorosa da Persona do Agente
 Gere o arquivo do subagente em `.agent/subagents/[nome_do_agente].md` seguindo o padrão abaixo:
