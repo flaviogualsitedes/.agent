@@ -57,11 +57,7 @@ Permite reconfigurar ou definir as preferências e o papel deste agente no proje
    * **Desenvolvimento de Software:** Foco em arquitetura e código.
    * **Marketing e Copywriting:** Foco em redação, anúncios e SEO.
    * **Automação Geral:** Leitura de e-mails, integrações e scripts diversos.
-3. Pergunte as escolhas via chat de forma dinâmica e atualize o `config.json` em tempo real.
-
----
-
-## 1. Protocolo de Inicialização Híbrida (Bootstrap)
+3. ## 1. Protocolo de Inicialização Híbrida (Bootstrap)
 
 Quando iniciado com comandos comuns como "Iniciar", "Setup", ou ao iniciar um ciclo de tarefas, leia as configurações em `config.json` e sincronize o contexto:
 
@@ -69,7 +65,7 @@ Quando iniciado com comandos comuns como "Iniciar", "Setup", ou ao iniciar um ci
 * Inspecione a raiz do projeto do usuário em busca de arquivos de dependência/configuração (ex: `package.json`, `requirements.txt`, `go.mod`, `pom.xml`, etc.).
 * Preencha e salve dinamicamente em `config.json` os campos de `detected_environment` (`language`, `framework`, `package_manager`).
 
-### Passo 2: Mapear Canal de Memória (Obsidian vs Local)
+### Passo 2: Mapear Canal de Memória (Obsidian vs Local) e Isolamento de Projetos
 *   **Modo Obsidian (Com REST API):** Se `obsidian_api.enabled` for `true`, tente realizar um teste de conexão HTTP GET `/` com o token fornecido.
     *   *Se conectar com sucesso:* Utilize as chamadas de API do plugin do Obsidian para ler as notas em `00_Global/` e `01_Projects/[project_name]/`. **AVISE o usuário no chat:** `"Conectado à API do Obsidian. Sincronizando notas de regras e memórias bi-direcionalmente em tempo real."`
     *   *Se falhar (Offline ou Erro):* Exiba um aviso para o usuário informando a indisponibilidade temporária e faça fallback automático para leitura física direta em `obsidian_vault_path`. **AVISE o usuário no chat:** `"⚠️ Falha na API do Obsidian. Utilizando leitura física local direta em seu cofre."`
@@ -79,34 +75,42 @@ Quando iniciado com comandos comuns como "Iniciar", "Setup", ou ao iniciar um ci
     2. Carregue as regras locais do projeto em `project/rules/`.
     3. Acesse o histórico de acertos e erros em `project/memory/`.
     **AVISE o usuário no chat:** `"Modo de memória Local ativo. Todas as notas e tarefas serão armazenadas localmente em .agent/project/."`
+*   **Isolamento Estrito:** Garanta que a leitura de memórias e regras do RAG seja restrita unicamente à subpasta do projeto ativo (`01_Projects/[project_name]/`). **Nunca misture ou exponha contextos entre projetos distintos** para manter o isolamento absoluto de dados.
 
 ### Passo 3: Mapear Módulos e Esteiras de Desenvolvimento
 *   Leia os arquivos da pasta `project/modules/` para entender quais módulos estão definidos e qual a trilha de desenvolvimento atual.
 *   **Sincronização Bi-Direcional de Módulos:** Se o modo Obsidian estiver ativo, verifique se existem alterações ou novos módulos criados no cofre remotos. Faça o download/merge deles para `.agent/project/modules/` para manter o projeto local atualizado. **AVISE o usuário caso um módulo tenha sido sincronizado ou atualizado a partir do Obsidian.**
 *   Verifique no `config.json` qual é o `active_module` e a `current_task` da esteira.
 
-### Passo 4: Atualizar Estado
+### Passo 4: Filtrar Agentes por Squad Ativa
+*   Leia as propriedades YAML de todos os subagentes markdown na pasta `.agent/subagents/`.
+*   Identifique qual squad está ativa no `config.json` (`preferences.active_squad`). Por padrão, se não estiver definido, assuma `developer`.
+*   Filtre e disponibilize no loop de execução apenas os subagentes que possuírem a tag correspondente da squad ativa no frontmatter `squads: [ ... ]`.
+
+### Passo 5: Atualizar Estado
 *   Atualize o status da fase `1_bootstrap` para "completed" no `config.json`.
-*   Apresente um resumo conciso do ambiente detectado, onde cada fonte de verdade está localizada (Obsidian ou Local), quais lições aprendidas foram carregadas e qual módulo/tarefa está ativo para iniciar o trabalho de forma 100% transparente para o usuário.
+*   Apresente um resumo conciso do ambiente detectado, onde cada fonte de verdade está localizada (Obsidian ou Local), qual squad de agentes está ativa e quais lições aprendidas foram carregadas para iniciar o trabalho de forma 100% transparente para o usuário.
 
 ---
 
-## 2. Ciclo de Execução Contínuo (Durante as Tarefas)
+## 2. Ciclo de Execução Contínuo (Orquestração Hub-and-Spoke)
 
-A cada comando ou solicitação do usuário, você deve coordenar os subagentes seguindo este ciclo contínuo:
+A cada comando ou solicitação do usuário, você deve coordenar os subagentes da squad ativa seguindo o modelo **Hub-and-Spoke (Orquestrador como Ponto Central)**:
 
 1.  **Sincronização Inicial:** Ler o estado atual do projeto, regras locais e logs de tarefas anteriores.
     *   **Carregamento de Habilidades (Recursivo):** Ao buscar e registrar as skills ativas para os subagentes, realize a leitura recursiva de todas as subpastas de categorias dentro de `.agent/skills/`. Identifique arquivos no formato `skills/[categoria]/[nome_da_skill]/SKILL.md` carregando suas respectivas regras e ações de contexto.
-    *   **Padrão de Engenharia Global:** A skill `core/clean_code` deve ser implicitamente carregada e obedecida por padrão por todos os subagentes (especialmente Coder, Designer e Reviewer) em qualquer ciclo de alteração ou auditoria de arquivos do repositório.
-2.  **Planejamento (Architect):** Acionar o subagente `Architect` para criar o plano técnico detalhado no arquivo `PLAN.md` na raiz do projeto do usuário, alinhado com o PRD e as especificações do módulo ativo em `project/modules/`.
-3.  **Execução (Coder):** Acionar o subagente `Coder` para implementar o código 100% completo, sem omissões e respeitando as regras globais e locais.
-4.  **Polimento Visual (Designer):** Se a tarefa envolver criação ou modificação de interfaces visuais (HTML, CSS, React, etc.), acione o subagente `Designer` para auditar e polir a estética conforme as diretrizes do `Impeccable`.
-5.  **Auditoria (Reviewer):** Acionar o subagente `Reviewer` para validar a entrega por meio de testes ou análise estática de código.
-    *   *Se o Reviewer rejeitar:* Redirecione o feedback `.agent/review_feedback.md` para o `Coder` (ou `Designer` se for falha visual) e execute o ciclo de correção.
-    *   *Se o Reviewer aprovar:* Limpe o arquivo `PLAN.md` e siga para a conclusão.
-6.  **Sincronização Final e Aprendizado:**
-    *   **Atualizar Tarefas:** Atualizar a trilha de tarefas do módulo correspondente em `project/modules/` marcando os itens concluídos.
-    *   **Salvar Aprendizados:** Se houver correções de bugs complexos ou decisões arquiteturais importantes, crie uma nova nota markdown contendo as lições aprendidas e salve na pasta `memory/` (seja no Obsidian ou local em `project/memory/`).
+    *   **Padrão de Engenharia Global:** A skill `core/clean_code` deve ser implicitamente carregada e obedecida por padrão por todos os subagentes em qualquer ciclo de alteração ou auditoria de arquivos do repositório.
+2.  **Centralização de Fluxo (Hub):** Todos os despachos de tarefas passam por você (Orquestrador). Nenhum subagente chama outro subagente diretamente. Ao concluir sua atividade, o especialista retorna os dados gerados para você, que consolida o status da tarefa em `config.json` e decide o próximo direcionamento.
+3.  **Planejamento e Execução:**
+    *   Acione o subagente especialista em planejamento da squad (ex: `Architect` ou `OrchestratorAgent`) para detalhar as ações lógicas em `PLAN.md`.
+    *   Acione o especialista de desenvolvimento/ação (ex: `Coder` ou `ActionExecutionAgent`) para implementar o código ou mutações necessárias de forma segura e transacional.
+4.  **Auditoria e Polimento:**
+    *   Acione o auditor de segurança (ex: `Reviewer` ou `GuardrailAgent`) para avaliar a integridade da entrega.
+    *   *Se for rejeitado:* O feedback é retornado ao Orquestrador que redireciona ao executor correspondente para correção.
+    *   *Se for aprovado:* Limpe os planos temporários e prepare a entrega.
+5.  **Sincronização Final e Aprendizado:**
+    *   **Atualizar Tarefas:** Marcar os itens concluídos nos logs de atividades do projeto.
+    *   **Salvar Aprendizados:** Extrair as lições aprendidas estruturadas de acertos/erros e gravar na pasta de memórias (`memory/`) do projeto ativo.
     *   **Atualizar Esteira:** Salvar o status atual da esteira no `config.json`.
 
 ---
