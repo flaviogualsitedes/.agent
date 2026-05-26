@@ -16,7 +16,6 @@ if ($ScriptDirName -eq ".agent") {
     $AgentPath = $ScriptPath
     $ProjPath = Split-Path -Path $ScriptPath -Parent
 } else {
-    # Caso seja executado de dentro da pasta clonada mas por caminhos relativos
     $AgentPath = Join-Path -Path $PSScriptRoot -ChildPath ".agent"
     if (Test-Path -Path $AgentPath) {
         $ProjPath = $PSScriptRoot
@@ -43,15 +42,19 @@ if ([string]::IsNullOrEmpty($CustomProjPath)) { $CustomProjPath = $ProjPath }
 # Pergunta: IDE Alvo
 Write-Host ""
 Write-Host "3. Qual IDE ou Harness de IA voce utilizara no chat deste projeto?" -ForegroundColor Cyan
-Write-Host "   [1] Cursor / Windsurf (.cursorrules)"
-Write-Host "   [2] Claude Code CLI (CLAUDE.md)"
-Write-Host "   [3] Copilot / Custom Instructions (.github)"
-Write-Host "   [4] Outra / Sem arquivo de ponte"
-$IdeChoice = Read-Host "Escolha a opcao (1-4)"
+Write-Host "   [1] Cursor (.cursorrules)"
+Write-Host "   [2] Windsurf (.windsurfrules)"
+Write-Host "   [3] VS Code / VS Code Insiders (.vscode)"
+Write-Host "   [4] Claude Code CLI (CLAUDE.md)"
+Write-Host "   [5] Copilot / Custom Instructions (.github)"
+Write-Host "   [6] Outra / Sem arquivo de ponte"
+$IdeChoice = Read-Host "Escolha a opcao (1-6)"
 $IdeTarget = "cursor"
-if ($IdeChoice -eq "2") { $IdeTarget = "claude-code" }
-elseif ($IdeChoice -eq "3") { $IdeTarget = "copilot" }
-elseif ($IdeChoice -eq "4") { $IdeTarget = "generic" }
+if ($IdeChoice -eq "2") { $IdeTarget = "windsurf" }
+elseif ($IdeChoice -eq "3") { $IdeTarget = "vscode" }
+elseif ($IdeChoice -eq "4") { $IdeTarget = "claude-code" }
+elseif ($IdeChoice -eq "5") { $IdeTarget = "copilot" }
+elseif ($IdeChoice -eq "6") { $IdeTarget = "generic" }
 
 # Pergunta: Idioma de Preferencia
 Write-Host ""
@@ -69,11 +72,17 @@ Write-Host ""
 Write-Host "5. Qual padrao de estilizacao a IA deve seguir no Frontend?" -ForegroundColor Cyan
 Write-Host "   [1] Vanilla CSS (Sem frameworks - Altamente Recomendado)"
 Write-Host "   [2] Tailwind CSS"
-Write-Host "   [3] styled-components"
-$StyleChoice = Read-Host "Escolha a opcao (1-3)"
+Write-Host "   [3] Shadcn UI + Tailwind"
+Write-Host "   [4] styled-components"
+Write-Host "   [5] Bootstrap"
+Write-Host "   [6] Material UI (MUI)"
+$StyleChoice = Read-Host "Escolha a opcao (1-6)"
 $StyleFramework = "vanilla-css"
 if ($StyleChoice -eq "2") { $StyleFramework = "tailwind-css" }
-elseif ($StyleChoice -eq "3") { $StyleFramework = "styled-components" }
+elseif ($StyleChoice -eq "3") { $StyleFramework = "shadcn-ui" }
+elseif ($StyleChoice -eq "4") { $StyleFramework = "styled-components" }
+elseif ($StyleChoice -eq "5") { $StyleFramework = "bootstrap" }
+elseif ($StyleChoice -eq "6") { $StyleFramework = "material-ui" }
 
 # Pergunta: Canal de Memoria (Obsidian vs Local)
 Write-Host ""
@@ -83,9 +92,26 @@ Write-Host "   [2] Sim, salvar notas no cofre do Obsidian (Obsidian)"
 $MemChoice = Read-Host "Escolha a opcao (1-2)"
 $UseObsidian = $false
 $VaultPath = ""
+$UseObsidianApi = $false
+$VaultId = ""
+$ObsidianToken = ""
+
 if ($MemChoice -eq "2") {
     $UseObsidian = $true
+    
+    Write-Host ""
+    Write-Host "⚠️  ATENCAO: Para integracao automatica com Obsidian, instale e habilite" -ForegroundColor Yellow
+    Write-Host "   o plugin de comunidade 'Local REST API & MCP Server' no seu Obsidian." -ForegroundColor Yellow
+    Write-Host ""
+    
     $VaultPath = Read-Host "Digite o caminho absoluto do seu cofre do Obsidian (ex: E:\Obsidian\MeuVault)"
+    
+    $ApiChoice = Read-Host "Deseja configurar a integracao de API em tempo real agora? (s/n)"
+    if ($ApiChoice -eq "s" -or $ApiChoice -eq "sim") {
+        $UseObsidianApi = $true
+        $VaultId = Read-Host "Digite o Vault ID gerado pelo plugin REST API"
+        $ObsidianToken = Read-Host "Digite o Bearer Token gerado pelo plugin"
+    }
 }
 
 # 3. Criando as Pastas Fisicas Necessarias
@@ -134,6 +160,12 @@ $Config.rag_memory = @{
     obsidian_vault_path = $VaultPath
     project_subfolder = if ($UseObsidian) { "01_Projects\$ProjName" } else { "" }
 }
+$Config.obsidian_api = @{
+    enabled = $UseObsidianApi
+    vault_id = $VaultId
+    url = "https://127.0.0.1:27124"
+    token = $ObsidianToken
+}
 
 $Config | ConvertTo-Json -Depth 5 | Out-File -FilePath $ConfigPath -Encoding utf8 -Force
 
@@ -150,6 +182,31 @@ Antes de responder ou escrever qualquer codigo:
 1. LEIA OBRIGATORIAMENTE o arquivo de regras e comportamento em: .agent/main.md
 2. Siga as instrucoes do orquestrador principal e dos subagentes correspondentes.
 "@
+}
+elseif ($IdeTarget -eq "windsurf") {
+    $BridgeFile = Join-Path -Path $CustomProjPath -ChildPath ".windsurfrules"
+    $BridgeContent = @"
+# ATENCAO AGENTE DE IA (WINDSURF)
+Este projeto utiliza o framework Automatize Agent para orquestracao.
+Antes de responder ou escrever qualquer codigo:
+1. LEIA OBRIGATORIAMENTE o arquivo de regras e comportamento em: .agent/main.md
+2. Siga as instrucoes do orquestrador principal e dos subagentes correspondentes.
+"@
+}
+elseif ($IdeTarget -eq "vscode") {
+    # No VS Code criamos um arquivo local de instructions na pasta de contexto do Copilot ou similar
+    $BridgeFile = Join-Path -Path $CustomProjPath -ChildPath ".github\copilot-instructions.md"
+    $BridgeContent = @"
+# COPILOT DEVELOPER INSTRUCTIONS
+Este projeto utiliza o framework Automatize Agent para orquestracao.
+Antes de responder ou escrever qualquer codigo:
+1. LEIA OBRIGATORIAMENTE o arquivo de regras em: .agent/main.md
+2. Siga as instrucoes do orquestrador principal e dos subagentes correspondentes.
+"@
+    $CopilotDir = Split-Path -Path $BridgeFile -Parent
+    if (-not (Test-Path -Path $CopilotDir)) {
+        New-Item -ItemType Directory -Path $CopilotDir -Force | Out-Null
+    }
 }
 elseif ($IdeTarget -eq "claude-code") {
     $BridgeFile = Join-Path -Path $CustomProjPath -ChildPath "CLAUDE.md"
@@ -195,6 +252,9 @@ Write-Host "Idioma: $Language" -ForegroundColor White
 Write-Host "Estilos: $StyleFramework" -ForegroundColor White
 if ($UseObsidian) {
     Write-Host "Memoria: Obsidian ($VaultPath)" -ForegroundColor White
+    if ($UseObsidianApi) {
+        Write-Host "REST API: Habilitada (Vault: $VaultId)" -ForegroundColor White
+    }
 } else {
     Write-Host "Memoria: Local (.agent/project/)" -ForegroundColor White
 }
