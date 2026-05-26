@@ -225,7 +225,9 @@ cat <<EOF > "$CONFIG_PATH"
     "preferences": {
         "language": "$LANGUAGE",
         "styling_framework": "$STYLE_FRAMEWORK",
-        "ide_target": "$IDE_TARGET"
+        "ide_target": "$IDE_TARGET",
+        "active_squad": "developer",
+        "active_scope": "software_development"
     },
     "rag_memory": {
         "enabled": $USE_OBSIDIAN,
@@ -274,7 +276,7 @@ BRIDGE_FILE=""
 BRIDGE_CONTENT=""
 
 if [ "$IDE_TARGET" == "antigravity" ]; then
-    BRIDGE_FILE="$CUSTOM_PROJ_PATH/.cursorrules"
+    BRIDGE_FILE="$CUSTOM_PROJ_PATH/.agentbridge.md"
     BRIDGE_CONTENT="# ATENCAO AGENTE DE IA (ANTIGRAVITY)
 Este projeto utiliza o framework Automatize Agent para orquestracao.
 Antes de responder ou escrever qualquer codigo:

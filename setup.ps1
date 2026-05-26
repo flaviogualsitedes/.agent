@@ -228,6 +228,8 @@ $Config.preferences = @{
     language = $Language
     styling_framework = $StyleFramework
     ide_target = $IdeTarget
+    active_squad = "developer"
+    active_scope = "software_development"
 }
 $Config.rag_memory = @{
     enabled = $UseObsidian
@@ -248,7 +250,7 @@ $BridgeFile = ""
 $BridgeContent = ""
 
 if ($IdeTarget -eq "antigravity") {
-    $BridgeFile = Join-Path -Path $CustomProjPath -ChildPath ".cursorrules"
+    $BridgeFile = Join-Path -Path $CustomProjPath -ChildPath ".agentbridge.md"
     $BridgeContent = @"
 # ATENCAO AGENTE DE IA (ANTIGRAVITY)
 Este projeto utiliza o framework Automatize Agent para orquestracao.
