@@ -39,22 +39,24 @@ if ([string]::IsNullOrEmpty($ProjName)) { $ProjName = $ProjDirName }
 $CustomProjPath = Read-Host "2. Caminho Fisico do Projeto (Padrao: $ProjPath)"
 if ([string]::IsNullOrEmpty($CustomProjPath)) { $CustomProjPath = $ProjPath }
 
-# Pergunta: IDE Alvo
+# Pergunta: IDE / Agente Alvo
 Write-Host ""
 Write-Host "3. Qual IDE ou Harness de IA voce utilizara no chat deste projeto?" -ForegroundColor Cyan
-Write-Host "   [1] Cursor (.cursorrules)"
-Write-Host "   [2] Windsurf (.windsurfrules)"
-Write-Host "   [3] VS Code / VS Code Insiders (.vscode)"
-Write-Host "   [4] Claude Code CLI (CLAUDE.md)"
-Write-Host "   [5] Copilot / Custom Instructions (.github)"
-Write-Host "   [6] Outra / Sem arquivo de ponte"
-$IdeChoice = Read-Host "Escolha a opcao (1-6)"
-$IdeTarget = "cursor"
-if ($IdeChoice -eq "2") { $IdeTarget = "windsurf" }
-elseif ($IdeChoice -eq "3") { $IdeTarget = "vscode" }
-elseif ($IdeChoice -eq "4") { $IdeTarget = "claude-code" }
-elseif ($IdeChoice -eq "5") { $IdeTarget = "copilot" }
-elseif ($IdeChoice -eq "6") { $IdeTarget = "generic" }
+Write-Host "   [1] Antigravity IDE (Recomendado)"
+Write-Host "   [2] Cursor (.cursorrules)"
+Write-Host "   [3] Windsurf (.windsurfrules)"
+Write-Host "   [4] VS Code / VS Code Insiders (.vscode)"
+Write-Host "   [5] Claude Code CLI (CLAUDE.md)"
+Write-Host "   [6] Copilot / Custom Instructions (.github)"
+Write-Host "   [7] Outra / Sem arquivo de ponte"
+$IdeChoice = Read-Host "Escolha a opcao (1-7)"
+$IdeTarget = "antigravity"
+if ($IdeChoice -eq "2") { $IdeTarget = "cursor" }
+elseif ($IdeChoice -eq "3") { $IdeTarget = "windsurf" }
+elseif ($IdeChoice -eq "4") { $IdeTarget = "vscode" }
+elseif ($IdeChoice -eq "5") { $IdeTarget = "claude-code" }
+elseif ($IdeChoice -eq "6") { $IdeTarget = "copilot" }
+elseif ($IdeChoice -eq "7") { $IdeTarget = "generic" }
 
 # Pergunta: Idioma de Preferencia
 Write-Host ""
@@ -100,21 +102,20 @@ if ($MemChoice -eq "2") {
     $UseObsidian = $true
     
     Write-Host ""
-    Write-Host "⚠️  ATENCAO: Para integracao automatica com Obsidian, instale e habilite" -ForegroundColor Yellow
-    Write-Host "   o plugin de comunidade 'Local REST API & MCP Server' no seu Obsidian." -ForegroundColor Yellow
+    Write-Host "⚠️  IMPORTANTE: Para integracao automatica, habilite o plugin de comunidade" -ForegroundColor Yellow
+    Write-Host "   'Local REST API & MCP Server' no seu Obsidian." -ForegroundColor Yellow
     Write-Host ""
     
-    $VaultPath = Read-Host "Digite o caminho absoluto do seu cofre do Obsidian (ex: E:\Obsidian\MeuVault)"
+    $VaultPath = Read-Host "Digite o caminho absoluto do seu cofre do Obsidian (Opcional se usar API, ex: E:\Obsidian\MeuVault)"
     
-    $ApiChoice = Read-Host "Deseja configurar a integracao de API em tempo real agora? (s/n)"
-    if ($ApiChoice -eq "s" -or $ApiChoice -eq "sim") {
+    $VaultId = Read-Host "Digite o Vault ID do Obsidian (Gerado pelo plugin)"
+    $ObsidianToken = Read-Host "Digite o Token (API Key / Bearer Token) do plugin REST API"
+    if (-not [string]::IsNullOrEmpty($VaultId) -and -not [string]::IsNullOrEmpty($ObsidianToken)) {
         $UseObsidianApi = $true
-        $VaultId = Read-Host "Digite o Vault ID gerado pelo plugin REST API"
-        $ObsidianToken = Read-Host "Digite o Bearer Token gerado pelo plugin"
     }
 }
 
-# 3. Criando as Pastas Fisicas Necessarias
+# 3. Criando as Pastas Fisicas Necessarias no Projeto Local
 Write-Host ""
 Write-Host "-> Criando estrutura de pastas de trabalho locais..." -ForegroundColor Gray
 $Folders = @(
@@ -134,7 +135,82 @@ foreach ($folder in $Folders) {
     }
 }
 
-# 4. Atualizando/Gravando config.json
+# 4. Criando Estrutura de Pastas e Arquivos no Obsidian se configurado
+if ($UseObsidian) {
+    $ApiSuccess = $false
+    
+    if ($UseObsidianApi) {
+        Write-Host "-> Tentando criar e sincronizar pastas via Obsidian REST API..." -ForegroundColor Gray
+        try {
+            # Desabilita verificação SSL para certificado autoassinado do Obsidian
+            [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
+            
+            $Headers = @{
+                "Authorization" = "Bearer $ObsidianToken"
+                "Accept" = "application/json"
+            }
+            
+            $LocalGlobalRulesFile = Join-Path -Path $AgentPath -ChildPath "rules\global.md"
+            $RulesContent = ""
+            if (Test-Path -Path $LocalGlobalRulesFile) {
+                $RulesContent = [System.IO.File]::ReadAllText($LocalGlobalRulesFile)
+            }
+            
+            # Função auxiliar para enviar arquivo via API (cria as pastas pai automaticamente se necessário)
+            function Write-ObsidianFile($RelativePath, $Content) {
+                $EncodedPath = [Uri]::EscapeUriString($RelativePath)
+                $Url = "https://127.0.0.1:27124/vault/$EncodedPath"
+                $Response = Invoke-RestMethod -Uri $Url -Method Put -Headers $Headers -Body $Content -ContentType "text/markdown" -ErrorAction Stop
+                return $true
+            }
+            
+            $res1 = Write-ObsidianFile "00_Global/global_rules.md" $RulesContent
+            $res2 = Write-ObsidianFile "01_Projects/$ProjName/memory/.gitkeep" ""
+            $res3 = Write-ObsidianFile "01_Projects/$ProjName/modules/.gitkeep" ""
+            $res4 = Write-ObsidianFile "01_Projects/$ProjName/tasks/.gitkeep" ""
+            
+            if ($res1 -and $res2 -and $res3 -and $res4) {
+                Write-Host "✓ Integracao via Obsidian REST API concluida com sucesso! Pastas e arquivos criados no cofre." -ForegroundColor Green
+                $ApiSuccess = $true
+            }
+        } catch {
+            Write-Host "⚠️  Nao foi possivel conectar ao Obsidian REST API para criar as pastas automaticamente." -ForegroundColor Yellow
+            Write-Host "   Certifique-se de que o Obsidian esta aberto com o plugin 'Local REST API' ativo." -ForegroundColor Yellow
+        }
+    }
+    
+    if (-not $ApiSuccess -and -not [string]::IsNullOrEmpty($VaultPath)) {
+        if (Test-Path -Path $VaultPath) {
+            Write-Host "-> Criando e sincronizando pastas fisicas diretamente no Obsidian..." -ForegroundColor Gray
+            
+            $GlobalRulesPath = Join-Path -Path $VaultPath -ChildPath "00_Global"
+            $ProjectMemoryPath = Join-Path -Path $VaultPath -ChildPath "01_Projects\$ProjName\memory"
+            $ProjectModulesPath = Join-Path -Path $VaultPath -ChildPath "01_Projects\$ProjName\modules"
+            $ProjectTasksPath = Join-Path -Path $VaultPath -ChildPath "01_Projects\$ProjName\tasks"
+
+            # Garante diretórios criados no cofre
+            $ObsidianFolders = @($GlobalRulesPath, $ProjectMemoryPath, $ProjectModulesPath, $ProjectTasksPath)
+            foreach ($oFolder in $ObsidianFolders) {
+                if (-not (Test-Path -Path $oFolder)) {
+                    New-Item -ItemType Directory -Path $oFolder -Force | Out-Null
+                }
+            }
+
+            # Copia o global.md local para o Obsidian
+            $LocalGlobalRulesFile = Join-Path -Path $AgentPath -ChildPath "rules\global.md"
+            $ObsidianGlobalRulesFile = Join-Path -Path $GlobalRulesPath -ChildPath "global_rules.md"
+            if (Test-Path -Path $LocalGlobalRulesFile) {
+                Copy-Item -Path $LocalGlobalRulesFile -Destination $ObsidianGlobalRulesFile -Force | Out-Null
+            }
+            
+            Write-Host "✓ Pastas do Obsidian geradas fisicamente no disco e global_rules.md sincronizado!" -ForegroundColor Green
+        } else {
+            Write-Host "⚠️  Caminho do Obsidian nao encontrado no disco e conexao API falhou. Pulando criacao." -ForegroundColor Yellow
+        }
+    }
+}
+
+# 5. Atualizando/Gravando config.json
 $ConfigPath = Join-Path -Path $AgentPath -ChildPath "config.json"
 $Config = @{}
 
@@ -169,11 +245,21 @@ $Config.obsidian_api = @{
 
 $Config | ConvertTo-Json -Depth 5 | Out-File -FilePath $ConfigPath -Encoding utf8 -Force
 
-# 5. Criando a Ponte na Raiz do Projeto (Com Seguranca de Backup)
+# 6. Criando a Ponte na Raiz do Projeto (Com Seguranca de Backup)
 $BridgeFile = ""
 $BridgeContent = ""
 
-if ($IdeTarget -eq "cursor") {
+if ($IdeTarget -eq "antigravity") {
+    $BridgeFile = Join-Path -Path $CustomProjPath -ChildPath ".cursorrules"
+    $BridgeContent = @"
+# ATENCAO AGENTE DE IA (ANTIGRAVITY)
+Este projeto utiliza o framework Automatize Agent para orquestracao.
+Antes de responder ou escrever qualquer codigo:
+1. LEIA OBRIGATORIAMENTE o arquivo de regras e comportamento em: .agent/main.md
+2. Siga as instrucoes do orquestrador principal e dos subagentes correspondentes.
+"@
+}
+elseif ($IdeTarget -eq "cursor") {
     $BridgeFile = Join-Path -Path $CustomProjPath -ChildPath ".cursorrules"
     $BridgeContent = @"
 # ATENCAO AGENTE DE IA
@@ -194,7 +280,6 @@ Antes de responder ou escrever qualquer codigo:
 "@
 }
 elseif ($IdeTarget -eq "vscode") {
-    # No VS Code criamos um arquivo local de instructions na pasta de contexto do Copilot ou similar
     $BridgeFile = Join-Path -Path $CustomProjPath -ChildPath ".github\copilot-instructions.md"
     $BridgeContent = @"
 # COPILOT DEVELOPER INSTRUCTIONS

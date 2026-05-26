@@ -49,24 +49,27 @@ fi
 # Pergunta: IDE Alvo
 echo ""
 echo -e "\e[36m3. Qual IDE ou Harness de IA voce utilizara no chat deste projeto?\e[0m"
-echo "   [1] Cursor (.cursorrules)"
-echo "   [2] Windsurf (.windsurfrules)"
-echo "   [3] VS Code / VS Code Insiders (.vscode)"
-echo "   [4] Claude Code CLI (CLAUDE.md)"
-echo "   [5] Copilot / Custom Instructions (.github)"
-echo "   [6] Outra / Sem arquivo de ponte"
-read -p "Escolha a opcao (1-6): " IDE_CHOICE
+echo "   [1] Antigravity IDE (Recomendado)"
+echo "   [2] Cursor (.cursorrules)"
+echo "   [3] Windsurf (.windsurfrules)"
+echo "   [4] VS Code / VS Code Insiders (.vscode)"
+echo "   [5] Claude Code CLI (CLAUDE.md)"
+echo "   [6] Copilot / Custom Instructions (.github)"
+echo "   [7] Outra / Sem arquivo de ponte"
+read -p "Escolha a opcao (1-7): " IDE_CHOICE
 
-IDE_TARGET="cursor"
+IDE_TARGET="antigravity"
 if [ "$IDE_CHOICE" == "2" ]; then
-    IDE_TARGET="windsurf"
+    IDE_TARGET="cursor"
 elif [ "$IDE_CHOICE" == "3" ]; then
-    IDE_TARGET="vscode"
+    IDE_TARGET="windsurf"
 elif [ "$IDE_CHOICE" == "4" ]; then
-    IDE_TARGET="claude-code"
+    IDE_TARGET="vscode"
 elif [ "$IDE_CHOICE" == "5" ]; then
-    IDE_TARGET="copilot"
+    IDE_TARGET="claude-code"
 elif [ "$IDE_CHOICE" == "6" ]; then
+    IDE_TARGET="copilot"
+elif [ "$IDE_CHOICE" == "7" ]; then
     IDE_TARGET="generic"
 fi
 
@@ -128,17 +131,19 @@ if [ "$MEM_CHOICE" == "2" ]; then
     echo -e "\e[33m⚠️  ATENCAO: Para integracao automatica com Obsidian, instale e habilite\e[0m"
     echo -e "\e[33m   o plugin de comunidade 'Local REST API & MCP Server' no seu Obsidian.\e[0m"
     echo ""
-    read -p "Digite o caminho absoluto do seu cofre do Obsidian (ex: /Users/usuario/Obsidian/MeuVault): " VAULT_PATH
+    read -p "Digite o caminho absoluto do seu cofre do Obsidian (Opcional se usar API, ex: /Users/usuario/Obsidian/MeuVault): " VAULT_PATH
     
     read -p "Deseja configurar a integracao de API em tempo real agora? (s/n): " API_CHOICE
     if [ "$API_CHOICE" == "s" ] || [ "$API_CHOICE" == "sim" ]; then
-        USE_OBSIDIAN_API=true
         read -p "Digite o Vault ID gerado pelo plugin REST API: " VAULT_ID
         read -p "Digite o Bearer Token gerado pelo plugin: " OBSIDIAN_TOKEN
+        if [ ! -z "$VAULT_ID" ] && [ ! -z "$OBSIDIAN_TOKEN" ]; then
+            USE_OBSIDIAN_API=true
+        fi
     fi
 fi
 
-# 3. Criando as Pastas Fisicas Necessarias
+# 3. Criando as Pastas Fisicas Necessarias no Projeto Local
 echo ""
 echo -e "\e[90m📂 Criando estrutura de pastas de trabalho locais...\e[0m"
 folders=(
@@ -158,7 +163,70 @@ for folder in "${folders[@]}"; do
     fi
 done
 
-# 4. Atualizando/Gravando config.json
+# 4. Criando Estrutura de Pastas e Arquivos no Obsidian se configurado
+if [ "$USE_OBSIDIAN" = true ]; then
+    API_SUCCESS=false
+    
+    if [ "$USE_OBSIDIAN_API" = true ]; then
+        echo -e "\e[90m⚡ Tentando criar e sincronizar pastas via Obsidian REST API...\e[0m"
+        
+        LOCAL_RULES_FILE="$AGENT_PATH/rules/global.md"
+        RULES_CONTENT=""
+        if [ -f "$LOCAL_RULES_FILE" ]; then
+            RULES_CONTENT=$(cat "$LOCAL_RULES_FILE")
+        fi
+        
+        HTTP_CODE_1=$(curl -s -k -o /dev/null -w "%{http_code}" -X PUT \
+            -H "Authorization: Bearer $OBSIDIAN_TOKEN" \
+            -H "Content-Type: text/markdown" \
+            --data-binary "$RULES_CONTENT" \
+            "https://127.0.0.1:27124/vault/00_Global/global_rules.md")
+            
+        HTTP_CODE_2=$(curl -s -k -o /dev/null -w "%{http_code}" -X PUT \
+            -H "Authorization: Bearer $OBSIDIAN_TOKEN" \
+            -H "Content-Type: text/plain" \
+            --data-binary "" \
+            "https://127.0.0.1:27124/vault/01_Projects/$PROJ_NAME/memory/.gitkeep")
+            
+        HTTP_CODE_3=$(curl -s -k -o /dev/null -w "%{http_code}" -X PUT \
+            -H "Authorization: Bearer $OBSIDIAN_TOKEN" \
+            -H "Content-Type: text/plain" \
+            --data-binary "" \
+            "https://127.0.0.1:27124/vault/01_Projects/$PROJ_NAME/modules/.gitkeep")
+            
+        HTTP_CODE_4=$(curl -s -k -o /dev/null -w "%{http_code}" -X PUT \
+            -H "Authorization: Bearer $OBSIDIAN_TOKEN" \
+            -H "Content-Type: text/plain" \
+            --data-binary "" \
+            "https://127.0.0.1:27124/vault/01_Projects/$PROJ_NAME/tasks/.gitkeep")
+            
+        if [ "$HTTP_CODE_1" = "200" ] || [ "$HTTP_CODE_1" = "204" ] || [ "$HTTP_CODE_1" = "201" ]; then
+            echo -e "\e[32m✓ Integracao via Obsidian REST API concluida com sucesso! Pastas criadas no cofre.\e[0m"
+            API_SUCCESS=true
+        else
+            echo -e "\e[33m⚠️  Chamadas da API falharam com status HTTP: $HTTP_CODE_1\e[0m"
+        fi
+    fi
+    
+    if [ "$API_SUCCESS" = false ] && [ ! -z "$VAULT_PATH" ]; then
+        if [ -d "$VAULT_PATH" ]; then
+            echo -e "\e[90m📂 Criando pastas físicas diretamente no Obsidian...\e[0m"
+            mkdir -p "$VAULT_PATH/00_Global"
+            mkdir -p "$VAULT_PATH/01_Projects/$PROJ_NAME/memory"
+            mkdir -p "$VAULT_PATH/01_Projects/$PROJ_NAME/modules"
+            mkdir -p "$VAULT_PATH/01_Projects/$PROJ_NAME/tasks"
+            
+            if [ -f "$AGENT_PATH/rules/global.md" ]; then
+                cp "$AGENT_PATH/rules/global.md" "$VAULT_PATH/00_Global/global_rules.md"
+            fi
+            echo -e "\e[32m✓ Pastas do Obsidian geradas no disco e global_rules.md sincronizado!\e[0m"
+        else
+            echo -e "\e[33m⚠️  Caminho do Obsidian não encontrado no disco e conexao API falhou. Pulando criacao.\e[0m"
+        fi
+    fi
+fi
+
+# 5. Atualizando/Gravando config.json
 CONFIG_PATH="$AGENT_PATH/config.json"
 echo -e "\e[90m⚙️  Gravando configurações em config.json...\e[0m"
 
@@ -216,11 +284,18 @@ cat <<EOF > "$CONFIG_PATH"
 }
 EOF
 
-# 5. Criando a Ponte na Raiz do Projeto (Com Segurança de Backup)
+# 6. Criando a Ponte na Raiz do Projeto (Com Segurança de Backup)
 BRIDGE_FILE=""
 BRIDGE_CONTENT=""
 
-if [ "$IDE_TARGET" == "cursor" ]; then
+if [ "$IDE_TARGET" == "antigravity" ]; then
+    BRIDGE_FILE="$CUSTOM_PROJ_PATH/.cursorrules"
+    BRIDGE_CONTENT="# ATENCAO AGENTE DE IA (ANTIGRAVITY)
+Este projeto utiliza o framework Automatize Agent para orquestracao.
+Antes de responder ou escrever qualquer codigo:
+1. LEIA OBRIGATORIAMENTE o arquivo de regras e comportamento em: .agent/main.md
+2. Siga as instrucoes do orquestrador principal e dos subagentes correspondentes."
+elif [ "$IDE_TARGET" == "cursor" ]; then
     BRIDGE_FILE="$CUSTOM_PROJ_PATH/.cursorrules"
     BRIDGE_CONTENT="# ATENCAO AGENTE DE IA
 Este projeto utiliza o framework Automatize Agent para orquestracao.
@@ -260,7 +335,7 @@ fi
 
 if [ ! -z "$BRIDGE_FILE" ]; then
     if [ -f "$BRIDGE_FILE" ]; then
-        TIMESTAMP=$(date +"%Y%md-%H%M%S")
+        TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
         BACKUP_FILE="$BRIDGE_FILE.bak-$TIMESTAMP"
         echo -e "\e[33m⚠️  Arquivo de regras da IDE existente detectado em: $BRIDGE_FILE\e[0m"
         echo -e "\e[33m📦 Gerando backup de segurança em: $BACKUP_FILE\e[0m"
@@ -290,4 +365,3 @@ fi
 echo -e "\e[32m=========================================================\e[0m"
 echo -e "\e[33mAbra o chat do seu editor e digite /automatize-agent para iniciar.\e[0m"
 echo ""
-EOF
