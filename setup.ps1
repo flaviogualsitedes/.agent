@@ -156,20 +156,22 @@ if ($UseObsidian) {
                 $RulesContent = [System.IO.File]::ReadAllText($LocalGlobalRulesFile)
             }
             
-            # Função auxiliar para enviar arquivo via API (cria as pastas pai automaticamente se necessário)
-            function Write-ObsidianFile($RelativePath, $Content) {
-                $EncodedPath = [Uri]::EscapeUriString($RelativePath)
+            $ApiPaths = @(
+                @{ Path = "00_Global/global_rules.md"; Content = $RulesContent },
+                @{ Path = "01_Projects/$ProjName/memory/.gitkeep"; Content = "" },
+                @{ Path = "01_Projects/$ProjName/modules/.gitkeep"; Content = "" },
+                @{ Path = "01_Projects/$ProjName/tasks/.gitkeep"; Content = "" }
+            )
+            
+            $SuccessCount = 0
+            foreach ($item in $ApiPaths) {
+                $EncodedPath = [Uri]::EscapeUriString($item.Path)
                 $Url = "https://127.0.0.1:27124/vault/$EncodedPath"
-                $Response = Invoke-RestMethod -Uri $Url -Method Put -Headers $Headers -Body $Content -ContentType "text/markdown" -ErrorAction Stop
-                return $true
+                $Response = Invoke-RestMethod -Uri $Url -Method Put -Headers $Headers -Body $item.Content -ContentType "text/markdown" -ErrorAction Stop
+                $SuccessCount++
             }
             
-            $res1 = Write-ObsidianFile "00_Global/global_rules.md" $RulesContent
-            $res2 = Write-ObsidianFile "01_Projects/$ProjName/memory/.gitkeep" ""
-            $res3 = Write-ObsidianFile "01_Projects/$ProjName/modules/.gitkeep" ""
-            $res4 = Write-ObsidianFile "01_Projects/$ProjName/tasks/.gitkeep" ""
-            
-            if ($res1 -and $res2 -and $res3 -and $res4) {
+            if ($SuccessCount -eq $ApiPaths.Count) {
                 Write-Host "✓ Integracao via Obsidian REST API concluida com sucesso! Pastas e arquivos criados no cofre." -ForegroundColor Green
                 $ApiSuccess = $true
             }

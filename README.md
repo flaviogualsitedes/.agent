@@ -17,14 +17,14 @@ Esta abordagem é ideal se você prefere não instalar dependências de Node glo
    ```bash
    git clone https://github.com/flaviogualsitedes/.agent.git .agent
    ```
-2. Acesse a pasta `.agent/` e rode o script de setup correspondente ao seu sistema operacional:
+2. Na raiz do seu projeto, rode o script de setup correspondente apontando para a pasta `.agent`:
    * **No Windows (PowerShell):**
      ```powershell
-     powershell -ExecutionPolicy Bypass -File .\setup.ps1
+     powershell -ExecutionPolicy Bypass -File .\.agent\setup.ps1
      ```
    * **No Linux / macOS (Bash):**
      ```bash
-     chmod +x setup.sh && ./setup.sh
+     chmod +x .agent/setup.sh && .agent/setup.sh
      ```
 3. O assistente interativo guiará você coletando o **Nome do Projeto**, **Caminho Físico**, a **IDE de preferência** (Cursor, Claude Code, etc.), **Idioma** e **Padrão de CSS/Estilização**, gerando automaticamente a ponte com a IDE e realizando o backup de regras pré-existentes na raiz de forma segura.
 
