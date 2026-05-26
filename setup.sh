@@ -128,7 +128,7 @@ OBSIDIAN_TOKEN=""
 if [ "$MEM_CHOICE" == "2" ]; then
     USE_OBSIDIAN=true
     echo ""
-    echo -e "\e[33m⚠️  ATENCAO: Para integracao automatica com Obsidian, instale e habilite\e[0m"
+    echo -e "\e[33m[!]  ATENCAO: Para integracao automatica com Obsidian, instale e habilite\e[0m"
     echo -e "\e[33m   o plugin de comunidade 'Local REST API & MCP Server' no seu Obsidian.\e[0m"
     echo ""
     read -p "Digite o caminho absoluto do seu cofre do Obsidian (Opcional se usar API, ex: /Users/usuario/Obsidian/MeuVault): " VAULT_PATH
@@ -145,7 +145,7 @@ fi
 
 # 3. Criando as Pastas Fisicas Necessarias no Projeto Local
 echo ""
-echo -e "\e[90m📂 Criando estrutura de pastas de trabalho locais...\e[0m"
+echo -e "\e[90m[Pastas] Criando estrutura de pastas de trabalho locais...\e[0m"
 folders=(
     "project/rules"
     "project/memory"
@@ -168,7 +168,7 @@ if [ "$USE_OBSIDIAN" = true ]; then
     API_SUCCESS=false
     
     if [ "$USE_OBSIDIAN_API" = true ]; then
-        echo -e "\e[90m⚡ Tentando criar e sincronizar pastas via Obsidian REST API...\e[0m"
+        echo -e "\e[90m[!] Tentando criar e sincronizar pastas via Obsidian REST API...\e[0m"
         
         LOCAL_RULES_FILE="$AGENT_PATH/rules/global.md"
         RULES_CONTENT=""
@@ -201,16 +201,16 @@ if [ "$USE_OBSIDIAN" = true ]; then
             "https://127.0.0.1:27124/vault/01_Projects/$PROJ_NAME/tasks/.gitkeep")
             
         if [ "$HTTP_CODE_1" = "200" ] || [ "$HTTP_CODE_1" = "204" ] || [ "$HTTP_CODE_1" = "201" ]; then
-            echo -e "\e[32m✓ Integracao via Obsidian REST API concluida com sucesso! Pastas criadas no cofre.\e[0m"
+            echo -e "\e[32m[OK] Integracao via Obsidian REST API concluida com sucesso! Pastas criadas no cofre.\e[0m"
             API_SUCCESS=true
         else
-            echo -e "\e[33m⚠️  Chamadas da API falharam com status HTTP: $HTTP_CODE_1\e[0m"
+            echo -e "\e[33m[!]  Chamadas da API falharam com status HTTP: $HTTP_CODE_1\e[0m"
         fi
     fi
     
     if [ "$API_SUCCESS" = false ] && [ ! -z "$VAULT_PATH" ]; then
         if [ -d "$VAULT_PATH" ]; then
-            echo -e "\e[90m📂 Criando pastas físicas diretamente no Obsidian...\e[0m"
+            echo -e "\e[90m[Pastas] Criando pastas físicas diretamente no Obsidian...\e[0m"
             mkdir -p "$VAULT_PATH/00_Global"
             mkdir -p "$VAULT_PATH/01_Projects/$PROJ_NAME/memory"
             mkdir -p "$VAULT_PATH/01_Projects/$PROJ_NAME/modules"
@@ -219,16 +219,16 @@ if [ "$USE_OBSIDIAN" = true ]; then
             if [ -f "$AGENT_PATH/rules/global.md" ]; then
                 cp "$AGENT_PATH/rules/global.md" "$VAULT_PATH/00_Global/global_rules.md"
             fi
-            echo -e "\e[32m✓ Pastas do Obsidian geradas no disco e global_rules.md sincronizado!\e[0m"
+            echo -e "\e[32m[OK] Pastas do Obsidian geradas no disco e global_rules.md sincronizado!\e[0m"
         else
-            echo -e "\e[33m⚠️  Caminho do Obsidian não encontrado no disco e conexao API falhou. Pulando criacao.\e[0m"
+            echo -e "\e[33m[!]  Caminho do Obsidian não encontrado no disco e conexao API falhou. Pulando criacao.\e[0m"
         fi
     fi
 fi
 
 # 5. Atualizando/Gravando config.json
 CONFIG_PATH="$AGENT_PATH/config.json"
-echo -e "\e[90m⚙️  Gravando configurações em config.json...\e[0m"
+echo -e "\e[90m[Config]  Gravando configurações em config.json...\e[0m"
 
 cat <<EOF > "$CONFIG_PATH"
 {
@@ -337,18 +337,18 @@ if [ ! -z "$BRIDGE_FILE" ]; then
     if [ -f "$BRIDGE_FILE" ]; then
         TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
         BACKUP_FILE="$BRIDGE_FILE.bak-$TIMESTAMP"
-        echo -e "\e[33m⚠️  Arquivo de regras da IDE existente detectado em: $BRIDGE_FILE\e[0m"
+        echo -e "\e[33m[!]  Arquivo de regras da IDE existente detectado em: $BRIDGE_FILE\e[0m"
         echo -e "\e[33m📦 Gerando backup de segurança em: $BACKUP_FILE\e[0m"
         mv "$BRIDGE_FILE" "$BACKUP_FILE"
     fi
 
-    echo -e "\e[90m⚡ Gerando arquivo de ponte com a IDE na raiz...\e[0m"
+    echo -e "\e[90m[!] Gerando arquivo de ponte com a IDE na raiz...\e[0m"
     echo "$BRIDGE_CONTENT" > "$BRIDGE_FILE"
 fi
 
 echo ""
 echo -e "\e[32m=========================================================\e[0m"
-echo -e "\e[32m 🎉 AUTOMATIZE AGENT CONFIGURADO COM SUCESSO! 🎉         \e[0m"
+echo -e "\e[32m [OK] AUTOMATIZE AGENT CONFIGURADO COM SUCESSO! [OK]         \e[0m"
 echo -e "\e[32m=========================================================\e[0m"
 echo "Projeto: $PROJ_NAME"
 echo "IDE Alvo: $IDE_TARGET"

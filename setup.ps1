@@ -102,7 +102,7 @@ if ($MemChoice -eq "2") {
     $UseObsidian = $true
     
     Write-Host ""
-    Write-Host "⚠️  IMPORTANTE: Para integracao automatica, habilite o plugin de comunidade" -ForegroundColor Yellow
+    Write-Host "[!]  IMPORTANTE: Para integracao automatica, habilite o plugin de comunidade" -ForegroundColor Yellow
     Write-Host "   'Local REST API & MCP Server' no seu Obsidian." -ForegroundColor Yellow
     Write-Host ""
     
@@ -143,7 +143,8 @@ if ($UseObsidian) {
         Write-Host "-> Tentando criar e sincronizar pastas via Obsidian REST API..." -ForegroundColor Gray
         try {
             # Desabilita verificação SSL para certificado autoassinado do Obsidian
-            [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
+            $SslCallback = { $true }
+            [System.Net.ServicePointManager]::ServerCertificateValidationCallback = $SslCallback
             
             $Headers = @{
                 "Authorization" = "Bearer $ObsidianToken"
@@ -172,11 +173,11 @@ if ($UseObsidian) {
             }
             
             if ($SuccessCount -eq $ApiPaths.Count) {
-                Write-Host "✓ Integracao via Obsidian REST API concluida com sucesso! Pastas e arquivos criados no cofre." -ForegroundColor Green
+                Write-Host "[OK] Integracao via Obsidian REST API concluida com sucesso! Pastas e arquivos criados no cofre." -ForegroundColor Green
                 $ApiSuccess = $true
             }
         } catch {
-            Write-Host "⚠️  Nao foi possivel conectar ao Obsidian REST API para criar as pastas automaticamente." -ForegroundColor Yellow
+            Write-Host "[!]  Nao foi possivel conectar ao Obsidian REST API para criar as pastas automaticamente." -ForegroundColor Yellow
             Write-Host "   Certifique-se de que o Obsidian esta aberto com o plugin 'Local REST API' ativo." -ForegroundColor Yellow
         }
     }
@@ -205,9 +206,9 @@ if ($UseObsidian) {
                 Copy-Item -Path $LocalGlobalRulesFile -Destination $ObsidianGlobalRulesFile -Force | Out-Null
             }
             
-            Write-Host "✓ Pastas do Obsidian geradas fisicamente no disco e global_rules.md sincronizado!" -ForegroundColor Green
+            Write-Host "[OK] Pastas do Obsidian geradas fisicamente no disco e global_rules.md sincronizado!" -ForegroundColor Green
         } else {
-            Write-Host "⚠️  Caminho do Obsidian nao encontrado no disco e conexao API falhou. Pulando criacao." -ForegroundColor Yellow
+            Write-Host "[!]  Caminho do Obsidian nao encontrado no disco e conexao API falhou. Pulando criacao." -ForegroundColor Yellow
         }
     }
 }
