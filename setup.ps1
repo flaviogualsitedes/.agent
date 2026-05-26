@@ -69,28 +69,13 @@ $Language = "pt-BR"
 if ($LangChoice -eq "2") { $Language = "en-US" }
 elseif ($LangChoice -eq "3") { $Language = "es-ES" }
 
-# Pergunta: Framework de Estilos Padrao
-Write-Host ""
-Write-Host "5. Qual padrao de estilizacao a IA deve seguir no Frontend?" -ForegroundColor Cyan
-Write-Host "   [1] Vanilla CSS (Sem frameworks - Altamente Recomendado)"
-Write-Host "   [2] Tailwind CSS"
-Write-Host "   [3] Shadcn UI + Tailwind"
-Write-Host "   [4] styled-components"
-Write-Host "   [5] Bootstrap"
-Write-Host "   [6] Material UI (MUI)"
-$StyleChoice = Read-Host "Escolha a opcao (1-6)"
 $StyleFramework = "vanilla-css"
-if ($StyleChoice -eq "2") { $StyleFramework = "tailwind-css" }
-elseif ($StyleChoice -eq "3") { $StyleFramework = "shadcn-ui" }
-elseif ($StyleChoice -eq "4") { $StyleFramework = "styled-components" }
-elseif ($StyleChoice -eq "5") { $StyleFramework = "bootstrap" }
-elseif ($StyleChoice -eq "6") { $StyleFramework = "material-ui" }
 
 # Pergunta: Canal de Memoria (Obsidian vs Local)
 Write-Host ""
-Write-Host "6. Deseja habilitar a persistencia de memorias no Obsidian?" -ForegroundColor Cyan
+Write-Host "5. Deseja habilitar a persistencia de memorias no Obsidian?" -ForegroundColor Cyan
 Write-Host "   [1] Nao, manter memoria apenas local no Git (Local)"
-Write-Host "   [2] Sim, salvar notas no cofre do Obsidian (Obsidian)"
+Write-Host "   [2] Sim, configurar integracao com Obsidian (Obsidian)"
 $MemChoice = Read-Host "Escolha a opcao (1-2)"
 $UseObsidian = $false
 $VaultPath = ""
@@ -102,16 +87,26 @@ if ($MemChoice -eq "2") {
     $UseObsidian = $true
     
     Write-Host ""
-    Write-Host "[!]  IMPORTANTE: Para integracao automatica, habilite o plugin de comunidade" -ForegroundColor Yellow
-    Write-Host "   'Local REST API & MCP Server' no seu Obsidian." -ForegroundColor Yellow
+    Write-Host "[!] IMPORTANTE: Se for utilizar a API em tempo real, certifique-se de ter o plugin" -ForegroundColor Yellow
+    Write-Host "    'Local REST API & MCP Server' instalado e ativo no seu Obsidian." -ForegroundColor Yellow
     Write-Host ""
     
-    $VaultPath = Read-Host "Digite o caminho absoluto do seu cofre do Obsidian (Opcional se usar API, ex: E:\Obsidian\MeuVault)"
+    $InputVault = Read-Host "Digite o Vault ID ou o caminho absoluto do seu cofre do Obsidian"
     
-    $VaultId = Read-Host "Digite o Vault ID do Obsidian (Gerado pelo plugin)"
-    $ObsidianToken = Read-Host "Digite o Token (API Key / Bearer Token) do plugin REST API"
-    if (-not [string]::IsNullOrEmpty($VaultId) -and -not [string]::IsNullOrEmpty($ObsidianToken)) {
-        $UseObsidianApi = $true
+    if ($InputVault -like "*\*" -or $InputVault -like "*/*" -or $InputVault -like "*:*") {
+        # É um caminho físico
+        $VaultPath = $InputVault
+        Write-Host "[OK] Detectado caminho fisico do cofre: $VaultPath" -ForegroundColor Green
+    } else {
+        # É um Vault ID
+        $VaultId = $InputVault
+        if (-not [string]::IsNullOrEmpty($VaultId)) {
+            $ObsidianToken = Read-Host "Digite o Token (Bearer Token / API Key) do plugin REST API"
+            if (-not [string]::IsNullOrEmpty($ObsidianToken)) {
+                $UseObsidianApi = $true
+                Write-Host "[OK] Detectada configuracao de API (Vault: $VaultId)" -ForegroundColor Green
+            }
+        }
     }
 }
 

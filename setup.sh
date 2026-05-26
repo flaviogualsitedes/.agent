@@ -88,35 +88,13 @@ elif [ "$LANG_CHOICE" == "3" ]; then
     LANGUAGE="es-ES"
 fi
 
-# Pergunta: Framework de Estilos Padrao
-echo ""
-echo -e "\e[36m5. Qual padrao de estilizacao a IA deve seguir no Frontend?\e[0m"
-echo "   [1] Vanilla CSS (Sem frameworks - Altamente Recomendado)"
-echo "   [2] Tailwind CSS"
-echo "   [3] Shadcn UI + Tailwind"
-echo "   [4] styled-components"
-echo "   [5] Bootstrap"
-echo "   [6] Material UI (MUI)"
-read -p "Escolha a opcao (1-6): " STYLE_CHOICE
-
 STYLE_FRAMEWORK="vanilla-css"
-if [ "$STYLE_CHOICE" == "2" ]; then
-    STYLE_FRAMEWORK="tailwind-css"
-elif [ "$STYLE_CHOICE" == "3" ]; then
-    STYLE_FRAMEWORK="shadcn-ui"
-elif [ "$STYLE_CHOICE" == "4" ]; then
-    STYLE_FRAMEWORK="styled-components"
-elif [ "$STYLE_CHOICE" == "5" ]; then
-    STYLE_FRAMEWORK="bootstrap"
-elif [ "$STYLE_CHOICE" == "6" ]; then
-    STYLE_FRAMEWORK="material-ui"
-fi
 
 # Pergunta: Canal de Memoria (Obsidian vs Local)
 echo ""
-echo -e "\e[36m6. Deseja habilitar a persistencia de memorias no Obsidian?\e[0m"
+echo -e "\e[36m5. Deseja habilitar a persistencia de memorias no Obsidian?\e[0m"
 echo "   [1] Nao, manter memoria apenas local no Git (Local)"
-echo "   [2] Sim, salvar notas no cofre do Obsidian (Obsidian)"
+echo "   [2] Sim, configurar integracao com Obsidian (Obsidian)"
 read -p "Escolha a opcao (1-2): " MEM_CHOICE
 
 USE_OBSIDIAN=false
@@ -128,17 +106,24 @@ OBSIDIAN_TOKEN=""
 if [ "$MEM_CHOICE" == "2" ]; then
     USE_OBSIDIAN=true
     echo ""
-    echo -e "\e[33m[!]  ATENCAO: Para integracao automatica com Obsidian, instale e habilite\e[0m"
-    echo -e "\e[33m   o plugin de comunidade 'Local REST API & MCP Server' no seu Obsidian.\e[0m"
+    echo -e "\e[33m[!] IMPORTANTE: Se for utilizar a API em tempo real, certifique-se de ter o plugin\e[0m"
+    echo -e "\e[33m    'Local REST API & MCP Server' instalado e ativo no seu Obsidian.\e[0m"
     echo ""
-    read -p "Digite o caminho absoluto do seu cofre do Obsidian (Opcional se usar API, ex: /Users/usuario/Obsidian/MeuVault): " VAULT_PATH
+    read -p "Digite o Vault ID ou o caminho absoluto do seu cofre do Obsidian: " INPUT_VAULT
     
-    read -p "Deseja configurar a integracao de API em tempo real agora? (s/n): " API_CHOICE
-    if [ "$API_CHOICE" == "s" ] || [ "$API_CHOICE" == "sim" ]; then
-        read -p "Digite o Vault ID gerado pelo plugin REST API: " VAULT_ID
-        read -p "Digite o Bearer Token gerado pelo plugin: " OBSIDIAN_TOKEN
-        if [ ! -z "$VAULT_ID" ] && [ ! -z "$OBSIDIAN_TOKEN" ]; then
-            USE_OBSIDIAN_API=true
+    if [[ "$INPUT_VAULT" == *"/"* || "$INPUT_VAULT" == *"\\"* || "$INPUT_VAULT" == *":"* ]]; then
+        # É um caminho físico
+        VAULT_PATH="$INPUT_VAULT"
+        echo -e "\e[32m[OK] Detectado caminho fisico do cofre: $VAULT_PATH\e[0m"
+    else
+        # É um Vault ID
+        VAULT_ID="$INPUT_VAULT"
+        if [ ! -z "$VAULT_ID" ]; then
+            read -p "Digite o Token (Bearer Token / API Key) do plugin REST API: " OBSIDIAN_TOKEN
+            if [ ! -z "$OBSIDIAN_TOKEN" ]; then
+                USE_OBSIDIAN_API=true
+                echo -e "\e[32m[OK] Detectada configuracao de API (Vault: $VAULT_ID)\e[0m"
+            fi
         fi
     fi
 fi

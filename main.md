@@ -50,6 +50,15 @@ Remove completamente o framework deste repositório:
 2. Solicita a confirmação explícita do usuário.
 3. Se confirmado, deleta recursivamente toda a pasta `.agent/` utilizando os comandos nativos do console.
 
+### Opção 6: Configurar Preferências do Projeto (`project_config`)
+Permite reconfigurar ou definir as preferências e o papel deste agente no projeto:
+1. **Configuração de Estilo (Frontend):** Se o projeto for web, permite escolher o framework de estilos de preferência do usuário (Vanilla CSS, Tailwind CSS, Shadcn UI, styled-components, etc.) no `config.json` (`preferences.styling_framework`).
+2. **Definição de Escopo de Atuação:** Permite redefinir se a Squad de IA deve operar em modo de:
+   * **Desenvolvimento de Software:** Foco em arquitetura e código.
+   * **Marketing e Copywriting:** Foco em redação, anúncios e SEO.
+   * **Automação Geral:** Leitura de e-mails, integrações e scripts diversos.
+3. Pergunte as escolhas via chat de forma dinâmica e atualize o `config.json` em tempo real.
+
 ---
 
 ## 1. Protocolo de Inicialização Híbrida (Bootstrap)
