@@ -342,7 +342,11 @@ echo "IDE Alvo: $IDE_TARGET"
 echo "Idioma: $LANGUAGE"
 echo "Estilos: $STYLE_FRAMEWORK"
 if [ "$USE_OBSIDIAN" = true ]; then
-    echo "Memoria: Obsidian ($VAULT_PATH)"
+    if [ -z "$VAULT_PATH" ]; then
+        echo "Memoria: Obsidian (API)"
+    else
+        echo "Memoria: Obsidian ($VAULT_PATH)"
+    fi
     if [ "$USE_OBSIDIAN_API" = true ]; then
         echo "REST API: Habilitada (Vault: $VAULT_ID)"
     fi

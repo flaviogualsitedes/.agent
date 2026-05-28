@@ -336,7 +336,8 @@ Write-Host "IDE Alvo: $IdeTarget" -ForegroundColor White
 Write-Host "Idioma: $Language" -ForegroundColor White
 Write-Host "Estilos: $StyleFramework" -ForegroundColor White
 if ($UseObsidian) {
-    Write-Host "Memoria: Obsidian ($VaultPath)" -ForegroundColor White
+    $DisplayPath = if ([string]::IsNullOrEmpty($VaultPath)) { "API" } else { $VaultPath }
+    Write-Host "Memoria: Obsidian ($DisplayPath)" -ForegroundColor White
     if ($UseObsidianApi) {
         Write-Host "REST API: Habilitada (Vault: $VaultId)" -ForegroundColor White
     }
