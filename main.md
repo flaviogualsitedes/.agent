@@ -118,3 +118,5 @@ A cada comando ou solicitação do usuário, você deve coordenar os subagentes 
 ## 3. Diretriz de Escrita e Mitigação Cognitiva
 *   **Código Integral:** Exigir que o subagente `Coder` nunca faça alterações parciais ou utilize resumos com comentários. Toda e qualquer alteração de código deve fornecer o arquivo 100% completo com seu caminho identificado no topo.
 *   **Identificação de Erros (Fail-Fast):** Toda vez que um erro ou inconsistência for encontrado no fluxo, interrompa a execução da pipeline imediatamente e descreva o problema de forma clara e direta para o usuário.
+
+# Nova Secao de Teste EGM
